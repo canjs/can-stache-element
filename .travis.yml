@@ -5,3 +5,11 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 addons:
   firefox: latest
+deploy:
+  provider: npm
+  email: core@donejs.com
+  api_key:
+    secure: c+Rv217fMY1SVBGpD907KKLm3LM0K76/9NnY7eQQI6DX+CJA7zDPMIEhc6GOEfzpjV9pZgSPcQP8F/rud3vnmUA9FyG6vGKs+tdwncFrrlmiIAUW3DACBM+wp2sg4aDNzh0rpmJm+VxqV7aqahwdW0kqgCHTc66xV3ZSF3voHbQ26EtdbugSOZ0IvdvTB+J2liNjPf/Sls4L2IgDClvGvLIlw9OqmnmGsC6OZ8ktLSnTogGzZeEQTjwNVKy1h1/GF9aGeNM6X52/2bREn5yEU/4HJlDm9si6JFLWhTXcJvBPCH2VJ+fRARK2BsXLtHeywUlNMqWbU3wUCz7uEO695iRxee+fxvQNngtC3fEYz5peq6/SNtXFlt0x7q4UDtiH6TZkgskkv+6Vlr5vJS+NvHry+Y88k9GaQjUkfqj2/rzvD3S4bPxV3PKx9hJbLTkcxMBXXld77VyF84TmXWjjfOaFk1FTl7q7+5rvj2xK31VfzXdrr1wexU/HxaHfsF+CDjUO55TwXgws5cMb5zFfucCx/w+hZMiVLeSxD6QvY7P4iP10wFQv3qG6sNnah4CY2xFyOEM0O0mAj2ytC8PTjovLPM7gwG9n0LjksGRMZmsaWUziF6pMmRsLXt6nyPiI0GZWJGwpfdqW5sUSPs1d6uU5qQ0KoBEpv07CVk2b6ro=
+  on:
+    tags: true
+    repo: canjs/can-stache-define-element
