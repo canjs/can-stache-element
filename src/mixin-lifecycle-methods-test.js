@@ -1,5 +1,5 @@
 var QUnit = require("steal-qunit");
-var extendWithLifecycleMethods = require("./extend-with-lifecycle-methods");
+var mixinLifecycleMethods = require("./mixin-lifecycle-methods");
 
 var canSymbol = require("can-symbol");
 var lifecycleStatusSymbol = canSymbol.for("can.lifecycleStatus");
@@ -17,12 +17,12 @@ function assertStatuses(assert, obj, expected) {
   });
 }
 
-QUnit.module("can-stache-define-element - extend-with-lifecycle-methods");
+QUnit.module("can-stache-define-element - mixin-lifecycle-methods");
 
 QUnit.test("constructor calls hooks - construct", function(assert) {
   assert.expect(8);
 
-  class Obj extends HTMLElement {
+  class Obj extends mixinLifecycleMethods(HTMLElement) {
     construct() {
       assertStatuses(assert, this, {
         constructed: false,
@@ -32,10 +32,9 @@ QUnit.test("constructor calls hooks - construct", function(assert) {
       });
     }
   }
-  var ExtendedObj = extendWithLifecycleMethods(Obj);
-  customElements.define("construct-hook-el", ExtendedObj);
+  customElements.define("construct-hook-el", Obj);
 
-  var obj = new ExtendedObj();
+  var obj = new Obj();
   assertStatuses(assert, obj, {
     constructed: true,
     initialized: false,
@@ -47,8 +46,10 @@ QUnit.test("constructor calls hooks - construct", function(assert) {
 QUnit.test("connectedCallback calls hooks - initialize, render, connect", function(assert) {
   assert.expect(16);
 
-  class Obj extends HTMLElement {
+  class Obj extends mixinLifecycleMethods(HTMLElement) {
     connectedCallback() {
+      super.connectedCallback();
+
       assertStatuses(assert, this, {
         constructed: true,
         initialized: true,
@@ -84,10 +85,9 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
       });
     }
   }
-  var ExtendedObj = extendWithLifecycleMethods(Obj);
-  customElements.define("connencted-callback-hook-el", ExtendedObj);
+  customElements.define("connencted-callback-hook-el", Obj);
 
-  var obj = new ExtendedObj();
+  var obj = new Obj();
   obj.connectedCallback();
 });
 
@@ -114,8 +114,10 @@ QUnit.skip("render can be called multiple times and will not re-render", functio
 QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
   assert.expect(12);
 
-  class Obj extends HTMLElement {
+  class Obj extends mixinLifecycleMethods(HTMLElement) {
     disconnectedCallback() {
+      super.disconnectedCallback();
+
       assertStatuses(assert, this, {
         constructed: true,
         initialized: true,
@@ -133,10 +135,9 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
       });
     }
   }
-  var ExtendedObj = extendWithLifecycleMethods(Obj);
-  customElements.define("disconnencted-callback-hook-el", ExtendedObj);
+  customElements.define("disconnencted-callback-hook-el", Obj);
 
-  var obj = new ExtendedObj();
+  var obj = new Obj();
   obj.connectedCallback();
   assertStatuses(assert, obj, {
     constructed: true,
@@ -151,9 +152,8 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 QUnit.test("lifecycle works with document.createElement", function(assert) {
   var fixture = document.querySelector("#qunit-fixture");
 
-  class Obj extends HTMLElement {}
-  var ExtendedObj = extendWithLifecycleMethods(Obj);
-  customElements.define("created-el", ExtendedObj);
+  class Obj extends mixinLifecycleMethods(HTMLElement) {}
+  customElements.define("created-el", Obj);
 
   var el = document.createElement("created-el");
   assertStatuses(assert, el, {
