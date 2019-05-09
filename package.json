@@ -1,0 +1,49 @@
+{
+  "name": "can-stache-define-element",
+  "description": "Create custom elements with can-stache, can-define-class, and JavaScript classes",
+  "version": "0.0.6",
+  "author": {
+    "name": "Bitovi",
+    "email": "contact@bitovi.com",
+    "url": "http://bitovi.com"
+  },
+  "bugs": {
+    "url": "https://github.com/canjs/can-stache-define-element/issues"
+  },
+  "dependencies": {
+    "can-define-class": "0.0.6",
+    "can-define-lazy-value": "^1.1.0",
+    "can-observe": "^2.3.0",
+    "can-reflect": "^1.17.9",
+    "can-stache": "^4.0.0",
+    "can-stache-bindings": "^4.0.0",
+    "can-symbol": "^1.6.4"
+  },
+  "devDependencies": {
+    "detect-cyclic-packages": "^1.1.0",
+    "fixpack": "^2.3.1",
+    "jshint": "^2.9.1",
+    "steal": "^2.2.1",
+    "steal-qunit": "^2.0.0",
+    "testee": "^0.9.0"
+  },
+  "homepage": "https://github.com/canjs/can-stache-define-element",
+  "keywords": [
+    "CanJS"
+  ],
+  "license": "MIT",
+  "main": "can-stache-define-element.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/canjs/can-stache-define-element.git"
+  },
+  "scripts": {
+    "detect-cycle": "detect-cyclic-packages",
+    "jshint": "jshint ./*.js --config",
+    "lint": "fixpack && npm run jshint",
+    "postversion": "git push --follow-tags",
+    "preversion": "npm test",
+    "test": "npm run detect-cycle && npm run lint && npm run testee",
+    "testee": "testee test/test.html --browsers firefox"
+  }
+}
