@@ -19,12 +19,15 @@
     "can-symbol": "^1.6.4"
   },
   "devDependencies": {
+    "@webcomponents/custom-elements": "^1.2.4",
     "can-observe": "^2.3.0",
     "detect-cyclic-packages": "^1.1.0",
     "fixpack": "^2.3.1",
+    "http-server": "^0.11.1",
     "jshint": "^2.9.1",
     "steal": "^2.2.1",
     "steal-qunit": "^2.0.0",
+    "test-saucelabs": "0.0.6",
     "testee": "^0.9.0"
   },
   "homepage": "https://github.com/canjs/can-stache-define-element",
@@ -38,7 +41,9 @@
     "url": "git://github.com/canjs/can-stache-define-element.git"
   },
   "scripts": {
+    "ci": "npm run test && node test/test-saucelabs.js",
     "detect-cycle": "detect-cyclic-packages",
+    "http-server": "http-server -p 3000 --silent",
     "jshint": "jshint ./*.js src/*.js test/*.js --config",
     "lint": "fixpack && npm run jshint",
     "postversion": "git push --follow-tags",
