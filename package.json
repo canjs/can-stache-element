@@ -19,6 +19,7 @@
     "can-symbol": "^1.6.4"
   },
   "devDependencies": {
+    "@webcomponents/custom-elements": "^1.2.4",
     "can-observe": "^2.3.0",
     "detect-cyclic-packages": "^1.1.0",
     "fixpack": "^2.3.1",
