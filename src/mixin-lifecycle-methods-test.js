@@ -3,12 +3,12 @@ var mixinLifecycleMethods = require("./mixin-lifecycle-methods");
 
 var canSymbol = require("can-symbol");
 var lifecycleStatusSymbol = canSymbol.for("can.lifecycleStatus");
+var inSetupSymbol = Symbol.for("can.initializing");
 
 function assertStatuses(assert, obj, expected) {
 	var lifecycleStatus = obj[lifecycleStatusSymbol];
 
 	[
-		"constructed",
 		"initialized",
 		"rendered",
 		"connected"
@@ -19,39 +19,13 @@ function assertStatuses(assert, obj, expected) {
 
 QUnit.module("can-stache-define-element - mixin-lifecycle-methods");
 
-QUnit.test("constructor calls hooks - construct", function(assert) {
-	assert.expect(8);
-
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
-		construct() {
-			assertStatuses(assert, this, {
-				constructed: false,
-				initialized: false,
-				rendered: false,
-				connected: false
-			});
-		}
-	}
-	customElements.define("construct-hook-el", Obj);
-
-	var obj = new Obj();
-	assertStatuses(assert, obj, {
-		constructed: true,
-		initialized: false,
-		rendered: false,
-		connected: false
-	});
-});
-
 QUnit.test("connectedCallback calls hooks - initialize, render, connect", function(assert) {
-	assert.expect(16);
+	assert.expect(12);
 
 	class Obj extends mixinLifecycleMethods(HTMLElement) {
 		connectedCallback() {
 			super.connectedCallback();
-
 			assertStatuses(assert, this, {
-				constructed: true,
 				initialized: true,
 				rendered: true,
 				connected: true
@@ -60,29 +34,29 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 
 		initialize() {
 			assertStatuses(assert, this, {
-				constructed: true,
 				initialized: false,
 				rendered: false,
 				connected: false
 			});
+			super.initialize();
 		}
 
 		render() {
 			assertStatuses(assert, this, {
-				constructed: true,
 				initialized: true,
 				rendered: false,
 				connected: false
 			});
+			super.render();
 		}
 
 		connect() {
 			assertStatuses(assert, this, {
-				constructed: true,
 				initialized: true,
 				rendered: true,
 				connected: false
 			});
+			super.connect();
 		}
 	}
 	customElements.define("connencted-callback-hook-el", Obj);
@@ -91,35 +65,13 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 	obj.connectedCallback();
 });
 
-QUnit.skip("initialize can be called", function(assert) {
-	assert.ok(true);
-});
-
-QUnit.skip("initialize can be called multiple times and will no re-initialize", function(assert) {
-	assert.ok(true);
-});
-
-QUnit.skip("render can be called", function(assert) {
-	assert.ok(true);
-});
-
-QUnit.skip("render calls initialize if it was not called", function(assert) {
-	assert.ok(true);
-});
-
-QUnit.skip("render can be called multiple times and will not re-render", function(assert) {
-	assert.ok(true);
-});
-
 QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
-	assert.expect(12);
+	assert.expect(9);
 
 	class Obj extends mixinLifecycleMethods(HTMLElement) {
 		disconnectedCallback() {
 			super.disconnectedCallback();
-
 			assertStatuses(assert, this, {
-				constructed: true,
 				initialized: true,
 				rendered: true,
 				connected: false
@@ -128,11 +80,11 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 
 		disconnect() {
 			assertStatuses(assert, this, {
-				constructed: true,
 				initialized: true,
 				rendered: true,
 				connected: true
 			});
+			super.disconnect();
 		}
 	}
 	customElements.define("disconnencted-callback-hook-el", Obj);
@@ -140,7 +92,6 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 	var obj = new Obj();
 	obj.connectedCallback();
 	assertStatuses(assert, obj, {
-		constructed: true,
 		initialized: true,
 		rendered: true,
 		connected: true
@@ -157,7 +108,6 @@ QUnit.test("lifecycle works with document.createElement", function(assert) {
 
 	var el = document.createElement("created-el");
 	assertStatuses(assert, el, {
-		constructed: true,
 		initialized: false,
 		rendered: false,
 		connected: false
@@ -165,7 +115,6 @@ QUnit.test("lifecycle works with document.createElement", function(assert) {
 
 	fixture.appendChild(el);
 	assertStatuses(assert, el, {
-		constructed: true,
 		initialized: true,
 		rendered: true,
 		connected: true
@@ -173,9 +122,106 @@ QUnit.test("lifecycle works with document.createElement", function(assert) {
 
 	fixture.removeChild(el);
 	assertStatuses(assert, el, {
-		constructed: true,
 		initialized: true,
 		rendered: true,
 		connected: false
 	});
+});
+
+QUnit.test("events are not dispatched in initialize, are dispatched during render|connect", function(assert) {
+	assert.expect(3);
+
+	class Obj extends mixinLifecycleMethods(HTMLElement) {
+		initialize() {
+			assert.equal(this[inSetupSymbol], true, "inSetupSymbol is true during initialize");
+			super.initialize();
+		}
+
+		render() {
+			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during render");
+			super.render();
+		}
+
+		connect() {
+			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during render");
+			super.connect();
+		}
+	}
+	customElements.define("event-dispatch-el", Obj);
+
+	var obj = new Obj();
+	obj.connectedCallback();
+});
+
+QUnit.test("events are not dispatched in initialize, are dispatched during render|connect when methods are called directly", function(assert) {
+	assert.expect(3);
+
+	class Obj extends mixinLifecycleMethods(HTMLElement) {
+		initialize() {
+			assert.equal(this[inSetupSymbol], true, "inSetupSymbol is true during initialize");
+			super.initialize();
+		}
+
+		render() {
+			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during render");
+			super.render();
+		}
+
+		connect() {
+			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during render");
+			super.connect();
+		}
+	}
+	customElements.define("event-dispatch-el-manual", Obj);
+
+	var obj = new Obj();
+	obj.initialize();
+	obj.render();
+	obj.connect();
+});
+
+QUnit.test("initialize, render, and connect are only called the first time connectedCallback is called", function(assert) {
+	assert.expect(3);
+
+	class Obj extends mixinLifecycleMethods(HTMLElement) {
+		initialize() {
+			super.initialize();
+			assert.ok(true, "initialize");
+		}
+
+		render() {
+			super.render();
+			assert.ok(true, "render");
+		}
+
+		connect() {
+			super.connect();
+			assert.ok(true, "connect");
+		}
+	}
+	customElements.define("connencted-twice-el", Obj);
+
+	var obj = new Obj();
+	obj.connectedCallback();
+	obj.connectedCallback();
+});
+
+QUnit.test("render calls initialize if it was not called", function(assert) {
+	assert.expect(2);
+
+	class Obj extends mixinLifecycleMethods(HTMLElement) {
+		initialize() {
+			super.initialize();
+			assert.ok(true, "initialize");
+		}
+
+		render() {
+			super.render();
+			assert.ok(true, "render");
+		}
+	}
+	customElements.define("render-calls-initialize-el", Obj);
+
+	var obj = new Obj();
+	obj.render();
 });
