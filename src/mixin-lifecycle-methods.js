@@ -1,7 +1,7 @@
 "use strict";
 
-var lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
-var inSetupSymbol = Symbol.for("can.initializing");
+const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
+const inSetupSymbol = Symbol.for("can.initializing");
 
 module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 	return class LifecycleElement extends BaseElement {
@@ -29,7 +29,7 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 
 		// custom element lifecycle methods
 		connectedCallback() {
-			var lifecycleStatus = this[lifecycleStatusSymbol];
+			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (!lifecycleStatus.initialized) {
 				this.initialize();
@@ -59,7 +59,7 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		render() {
-			var lifecycleStatus = this[lifecycleStatusSymbol];
+			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (!lifecycleStatus.initialized) {
 				this.initialize();

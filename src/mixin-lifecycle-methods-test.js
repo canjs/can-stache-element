@@ -1,12 +1,11 @@
-var QUnit = require("steal-qunit");
-var mixinLifecycleMethods = require("./mixin-lifecycle-methods");
+const QUnit = require("steal-qunit");
+const mixinLifecycleMethods = require("./mixin-lifecycle-methods");
 
-var canSymbol = require("can-symbol");
-var lifecycleStatusSymbol = canSymbol.for("can.lifecycleStatus");
-var inSetupSymbol = Symbol.for("can.initializing");
+const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
+const inSetupSymbol = Symbol.for("can.initializing");
 
 function assertStatuses(assert, obj, expected) {
-	var lifecycleStatus = obj[lifecycleStatusSymbol];
+	const lifecycleStatus = obj[lifecycleStatusSymbol];
 
 	[
 		"initialized",
@@ -61,7 +60,7 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 	}
 	customElements.define("connencted-callback-hook-el", Obj);
 
-	var obj = new Obj();
+	const obj = new Obj();
 	obj.connectedCallback();
 });
 
@@ -89,7 +88,7 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 	}
 	customElements.define("disconnencted-callback-hook-el", Obj);
 
-	var obj = new Obj();
+	const obj = new Obj();
 	obj.connectedCallback();
 	assertStatuses(assert, obj, {
 		initialized: true,
@@ -101,12 +100,12 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 });
 
 QUnit.test("lifecycle works with document.createElement", function(assert) {
-	var fixture = document.querySelector("#qunit-fixture");
+	const fixture = document.querySelector("#qunit-fixture");
 
 	class Obj extends mixinLifecycleMethods(HTMLElement) {}
 	customElements.define("created-el", Obj);
 
-	var el = document.createElement("created-el");
+	const el = document.createElement("created-el");
 	assertStatuses(assert, el, {
 		initialized: false,
 		rendered: false,
@@ -149,7 +148,7 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 	}
 	customElements.define("event-dispatch-el", Obj);
 
-	var obj = new Obj();
+	const obj = new Obj();
 	obj.connectedCallback();
 });
 
@@ -174,7 +173,7 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 	}
 	customElements.define("event-dispatch-el-manual", Obj);
 
-	var obj = new Obj();
+	const obj = new Obj();
 	obj.initialize();
 	obj.render();
 	obj.connect();
@@ -201,7 +200,7 @@ QUnit.test("initialize, render, and connect are only called the first time conne
 	}
 	customElements.define("connencted-twice-el", Obj);
 
-	var obj = new Obj();
+	const obj = new Obj();
 	obj.connectedCallback();
 	obj.connectedCallback();
 });
@@ -222,6 +221,6 @@ QUnit.test("render calls initialize if it was not called", function(assert) {
 	}
 	customElements.define("render-calls-initialize-el", Obj);
 
-	var obj = new Obj();
+	const obj = new Obj();
 	obj.render();
 });

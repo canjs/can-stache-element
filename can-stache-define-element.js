@@ -1,9 +1,9 @@
 "use strict";
 
-var mixinLifecycleMethods = require("./src/mixin-lifecycle-methods");
-var mixinDefineProperty = require("can-define-class/extend-with-define-property");
-var mixinStacheView = require("./src/mixin-stache-view");
-var mixinViewModelSymbol = require("./src/mixin-viewmodel-symbol");
+const mixinLifecycleMethods = require("./src/mixin-lifecycle-methods");
+const mixinDefineClass = require("./src/mixin-define-class");
+const mixinStacheView = require("./src/mixin-stache-view");
+const mixinViewModelSymbol = require("./src/mixin-viewmodel-symbol");
 
 function DeriveElement(BaseElement = HTMLElement) {
 	return class StacheDefineElement extends
@@ -11,9 +11,10 @@ function DeriveElement(BaseElement = HTMLElement) {
 	mixinViewModelSymbol(
 		// mix in stache renderer from `static view` property
 		mixinStacheView(
-			// add create getters/setters from `static define` property
-			mixinDefineProperty(
+			// add getters/setters from `static define` property
+			mixinDefineClass(
 				// add lifecycle hooks to BaseElement
+				// this needs to happen before other mixins that use these hooks
 				mixinLifecycleMethods(BaseElement)
 			)
 		)
