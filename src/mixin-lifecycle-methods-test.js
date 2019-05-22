@@ -10,7 +10,8 @@ function assertStatuses(assert, obj, expected) {
 	[
 		"initialized",
 		"rendered",
-		"connected"
+		"connected",
+		"disconnected"
 	].forEach(function(status) {
 		assert.equal(lifecycleStatus[status], expected[status], status + " should be " + expected[status]);
 	});
@@ -19,7 +20,7 @@ function assertStatuses(assert, obj, expected) {
 QUnit.module("can-stache-define-element - mixin-lifecycle-methods");
 
 QUnit.test("connectedCallback calls hooks - initialize, render, connect", function(assert) {
-	assert.expect(12);
+	assert.expect(16);
 
 	class Obj extends mixinLifecycleMethods(HTMLElement) {
 		connectedCallback() {
@@ -27,7 +28,8 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 			assertStatuses(assert, this, {
 				initialized: true,
 				rendered: true,
-				connected: true
+				connected: true,
+				disconnected: false
 			});
 		}
 
@@ -35,7 +37,8 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 			assertStatuses(assert, this, {
 				initialized: false,
 				rendered: false,
-				connected: false
+				connected: false,
+				disconnected: false
 			});
 			super.initialize();
 		}
@@ -44,7 +47,8 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 			assertStatuses(assert, this, {
 				initialized: true,
 				rendered: false,
-				connected: false
+				connected: false,
+				disconnected: false
 			});
 			super.render();
 		}
@@ -53,7 +57,8 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 			assertStatuses(assert, this, {
 				initialized: true,
 				rendered: true,
-				connected: false
+				connected: false,
+				disconnected: false
 			});
 			super.connect();
 		}
@@ -65,7 +70,7 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 });
 
 QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
-	assert.expect(9);
+	assert.expect(12);
 
 	class Obj extends mixinLifecycleMethods(HTMLElement) {
 		disconnectedCallback() {
@@ -73,7 +78,8 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 			assertStatuses(assert, this, {
 				initialized: true,
 				rendered: true,
-				connected: false
+				connected: true,
+				disconnected: true
 			});
 		}
 
@@ -81,7 +87,8 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 			assertStatuses(assert, this, {
 				initialized: true,
 				rendered: true,
-				connected: true
+				connected: true,
+				disconnected: false
 			});
 			super.disconnect();
 		}
@@ -93,7 +100,8 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 	assertStatuses(assert, obj, {
 		initialized: true,
 		rendered: true,
-		connected: true
+		connected: true,
+		disconnected: false
 	});
 
 	obj.disconnectedCallback();
@@ -109,21 +117,24 @@ QUnit.test("lifecycle works with document.createElement", function(assert) {
 	assertStatuses(assert, el, {
 		initialized: false,
 		rendered: false,
-		connected: false
+		connected: false,
+		disconnected: false
 	});
 
 	fixture.appendChild(el);
 	assertStatuses(assert, el, {
 		initialized: true,
 		rendered: true,
-		connected: true
+		connected: true,
+		disconnected: false
 	});
 
 	fixture.removeChild(el);
 	assertStatuses(assert, el, {
 		initialized: true,
 		rendered: true,
-		connected: false
+		connected: true,
+		disconnected: true
 	});
 });
 
@@ -203,6 +214,22 @@ QUnit.test("initialize, render, and connect are only called the first time conne
 	const obj = new Obj();
 	obj.connectedCallback();
 	obj.connectedCallback();
+});
+
+QUnit.test("disconnect is only called the first time disconnectedCallback is called", function(assert) {
+	assert.expect(1);
+
+	class Obj extends mixinLifecycleMethods(HTMLElement) {
+		disconnect() {
+			super.disconnect();
+			assert.ok(true, "connect");
+		}
+	}
+	customElements.define("disconnencted-twice-el", Obj);
+
+	const obj = new Obj();
+	obj.disconnectedCallback();
+	obj.disconnectedCallback();
 });
 
 QUnit.test("render calls initialize if it was not called", function(assert) {

@@ -22,10 +22,10 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			// add lifecycle status symbol
 			Object.defineProperty(this, lifecycleStatusSymbol, {
 				value: {
-					constructed: false,
 					initialized: false,
 					rendered: false,
-					connected: false
+					connected: false,
+					disconnected: false
 				},
 				enumerable: false
 			});
@@ -49,14 +49,14 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		disconnectedCallback() {
-			this.disconnect();
+			const lifecycleStatus = this[lifecycleStatusSymbol];
+
+			if (!lifecycleStatus.disconnected) {
+				this.disconnect();
+			}
 		}
 
 		// custom lifecycle methods
-		construct() {
-			this[lifecycleStatusSymbol].constructed = true;
-		}
-
 		initialize() {
 			this[lifecycleStatusSymbol].initialized = true;
 			this[inSetupSymbol] = false;
@@ -87,7 +87,7 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		disconnect() {
-			this[lifecycleStatusSymbol].connected = false;
+			this[lifecycleStatusSymbol].disconnected = true;
 		}
 	};
 };
