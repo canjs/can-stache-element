@@ -9,12 +9,15 @@ QUnit.test("basics", function(assert) {
 	class StacheElement extends mixinStacheView(HTMLElement) {}
 
 	class App extends StacheElement {
+		static get view() {
+			return "Hello {{greeting}}";
+		}
+
 		constructor() {
 			super();
 			this.greeting = "World";
 		}
 	}
-	App.view = "Hello {{greeting}}";
 	customElements.define("stache-app", App);
 
 	const app = new App();
@@ -30,13 +33,16 @@ if (browserSupportsShadowDOM) {
 		class StacheElement extends mixinStacheView(HTMLElement) {}
 
 		class App extends StacheElement {
+			static get view() {
+				return "Hello {{greeting}}";
+			}
+
 			constructor() {
 				super();
 				this.viewRoot = this.attachShadow({ mode: "open" });
 				this.greeting = "World";
 			}
 		}
-		App.view = "Hello {{greeting}}";
 		customElements.define("stache-shadow-dom-app", App);
 
 		const app = new App();

@@ -8,6 +8,9 @@ require("can-stache-bindings");
 module.exports = function mixinStacheView(Base = HTMLElement) {
 	return class StacheClass extends Base {
 		render() {
+			if(typeof super.render === "function") {
+				super.render();
+			}
 			const staticView = this.constructor.view;
 			const renderer = stache(staticView/* NODELIST */);
 			const frag = renderer(this);
