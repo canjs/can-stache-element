@@ -1,7 +1,7 @@
-var QUnit = require("steal-qunit");
-var mixinStacheView = require("./mixin-stache-view");
+const QUnit = require("steal-qunit");
+const mixinStacheView = require("./mixin-stache-view");
 
-var browserSupportsShadowDOM = typeof document.body.attachShadow === "function";
+const browserSupportsShadowDOM = typeof document.body.attachShadow === "function";
 
 QUnit.module("can-stache-define-element - mixin-stache-view");
 
@@ -17,7 +17,7 @@ QUnit.test("basics", function(assert) {
 	App.view = "Hello {{greeting}}";
 	customElements.define("stache-app", App);
 
-	var app = new App();
+	const app = new App();
 
 	assert.equal(typeof app.render, "function", "mixin adds a render method on class instances");
 	app.render();
@@ -39,7 +39,7 @@ if (browserSupportsShadowDOM) {
 		App.view = "Hello {{greeting}}";
 		customElements.define("stache-shadow-dom-app", App);
 
-		var app = new App();
+		const app = new App();
 
 		assert.equal(typeof app.render, "function", "mixin adds a render method on class instances");
 		app.render();

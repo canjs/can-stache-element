@@ -1,11 +1,11 @@
-var QUnit = require("steal-qunit");
-var StacheDefineElement = require("./can-stache-define-element");
-var observe = require("can-observe");
+const QUnit = require("steal-qunit");
+const StacheDefineElement = require("./can-stache-define-element");
+const observe = require("can-observe");
 
 QUnit.module("can-stache-define-element");
 
 QUnit.test("basics", function(assert) {
-	var fixture = document.querySelector("#qunit-fixture");
+	const fixture = document.querySelector("#qunit-fixture");
 
 	class Person extends observe.Object {
 		get full() {
@@ -44,13 +44,13 @@ QUnit.test("basics", function(assert) {
 		<p>{{this.name.full}}</p>
 	`;
 	customElements.define("basic-app", Basic);
-	var el = document.createElement("basic-app");
+	const el = document.createElement("basic-app");
 	fixture.appendChild(el);
 
-	var inputs = document.querySelectorAll("input");
-	var firstNameInput = inputs[0];
-	var lastNameInput = inputs[1];
-	var fullNameP = document.querySelectorAll("p")[2];
+	const inputs = document.querySelectorAll("input");
+	const firstNameInput = inputs[0];
+	const lastNameInput = inputs[1];
+	const fullNameP = document.querySelectorAll("p")[2];
 
 	assert.equal(firstNameInput.value, "Kevin", "firstName input has correct default value");
 	assert.equal(lastNameInput.value, "McCallister", "lastName input has correct default value");

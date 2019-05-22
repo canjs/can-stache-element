@@ -1,8 +1,7 @@
 "use strict";
 
-var defineLazyValue = require("can-define-lazy-value");
-var canSymbol = require("can-symbol");
-var viewModelSymbol = canSymbol.for("can.viewModel");
+const defineLazyValue = require("can-define-lazy-value");
+const viewModelSymbol = Symbol.for("can.viewModel");
 
 module.exports = function mixinViewModelSymbol(BaseClass = HTMLElement) {
 	class ViewModelClass extends BaseClass {}
