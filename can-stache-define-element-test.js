@@ -1,17 +1,10 @@
 const QUnit = require("steal-qunit");
 const StacheDefineElement = require("./can-stache-define-element");
-const observe = require("can-observe");
 
 QUnit.module("can-stache-define-element");
 
 QUnit.test("basics", function(assert) {
 	const fixture = document.querySelector("#qunit-fixture");
-
-	class Person extends observe.Object {
-		get full() {
-			return `${this.first} ${this.last}`;
-		}
-	}
 
 	class Input extends StacheDefineElement {
 		static get view() {
@@ -28,26 +21,29 @@ QUnit.test("basics", function(assert) {
 	class Basic extends StacheDefineElement {
 		static get view() {
 			return `
-				<in-put inputValue:bind="this.name.first" handler:from="this.setFirst"></in-put>
-				<in-put inputValue:bind="this.name.last" handler:from="this.setLast"></in-put>
-				<p>{{this.name.full}}</p>
+				<in-put inputValue:bind="this.first" handler:from="this.setFirst"></in-put>
+				<in-put inputValue:bind="this.last" handler:from="this.setLast"></in-put>
+				<p>{{this.fullName}}</p>
 			`;
 		}
 
-		initialize() {
-			super.initialize();
-			this.name = new Person({
-				first: "Kevin",
-				last: "McCallister"
-			});
+		static get define() {
+			return {
+				first: { Type: String, default: "Kevin" },
+				last: { Type: String, default: "McCallister" }
+			};
+		}
+
+		get fullName() {
+			return `${this.first} ${this.last}`;
 		}
 
 		setFirst(val) {
-			this.name.first = val;
+			this.first = val;
 		}
 
 		setLast(val) {
-			this.name.last = val;
+			this.last = val;
 		}
 	}
 	customElements.define("basic-app", Basic);
