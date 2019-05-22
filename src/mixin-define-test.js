@@ -4,14 +4,13 @@ const mixinDefine = require("./mixin-define");
 QUnit.module("can-stache-define-element - mixin-define");
 
 QUnit.test("basics", function(assert) {
-	class DefineElement extends mixinDefine(HTMLElement) {
+	class DefineElement extends mixinDefine(Object) {
 		static get define() {
 			return {
 				age: { Type: Number, default: 32 }
 			};
 		}
 	}
-	customElements.define("define-element", DefineElement);
 	const el = new DefineElement();
 	el.initialize();
 
