@@ -8,7 +8,7 @@ require("can-stache-bindings");
 module.exports = function mixinStacheView(Base = HTMLElement) {
 	return class StacheClass extends Base {
 		render() {
-			if(typeof super.render === "function") {
+			if(super.render) {
 				super.render();
 			}
 			const staticView = this.constructor.view;

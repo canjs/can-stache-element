@@ -11,16 +11,14 @@
     "url": "https://github.com/canjs/can-stache-define-element/issues"
   },
   "dependencies": {
-    "can-define-class": "0.0.6",
     "can-define-lazy-value": "^1.1.0",
-    "can-reflect": "^1.17.9",
+    "can-define-mixin": "^0.1.0",
     "can-stache": "^4.0.0",
     "can-stache-bindings": "^4.0.0",
     "can-symbol": "^1.6.4"
   },
   "devDependencies": {
     "@webcomponents/custom-elements": "^1.2.4",
-    "can-observe": "^2.3.0",
     "detect-cyclic-packages": "^1.1.0",
     "fixpack": "^2.3.1",
     "http-server": "^0.11.1",
