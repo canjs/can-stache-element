@@ -7,6 +7,10 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 	return class LifecycleElement extends BaseElement {
 		constructor() {
 			super();
+			if (arguments.length > 0) {
+				throw new Error("can-stache-define-element: Do not pass arguments to the constructor. Initial property values should be passed to the `initialize` hook.");
+			}
+
 			// add inSetup symbol to prevent events being dispatched
 			Object.defineProperty(this, inSetupSymbol, {
 				configurable: true,

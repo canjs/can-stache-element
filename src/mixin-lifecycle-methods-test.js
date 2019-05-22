@@ -224,3 +224,14 @@ QUnit.test("render calls initialize if it was not called", function(assert) {
 	const obj = new Obj();
 	obj.render();
 });
+
+QUnit.test("constructor throws if passed arguments", function(assert) {
+	class Obj extends mixinLifecycleMethods(HTMLElement) {}
+	customElements.define("constructor-arguments-el", Obj);
+
+	try {
+		new Obj({ foo: "bar" });
+	} catch(e) {
+		assert.ok(true);
+	}
+});
