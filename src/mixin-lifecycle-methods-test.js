@@ -235,3 +235,28 @@ QUnit.test("constructor throws if passed arguments", function(assert) {
 		assert.ok(true);
 	}
 });
+
+QUnit.test("initial props should always be passed to initialize", function(assert) {
+	assert.expect(4);
+
+	const props = { foo: "bar", baz: "bap" };
+	class Obj extends mixinLifecycleMethods(HTMLElement) {
+		initialize(initializeProps) {
+			super.initialize();
+			assert.equal(initializeProps, props, "Correct props passed to initialize");
+		}
+	}
+	customElements.define("initialize-props-el", Obj);
+
+	const initializeObj = new Obj();
+	initializeObj.initialize(props);
+
+	const renderObj = new Obj();
+	renderObj.render(props);
+
+	const connectObj = new Obj();
+	connectObj.connect(props);
+
+	const connectedCallbackObj = new Obj();
+	connectedCallbackObj.connectedCallback(props);
+});

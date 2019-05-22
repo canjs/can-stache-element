@@ -7,7 +7,7 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 	return class LifecycleElement extends BaseElement {
 		constructor() {
 			super();
-			if (arguments.length > 0) {
+			if (arguments.length) {
 				throw new Error("can-stache-define-element: Do not pass arguments to the constructor. Initial property values should be passed to the `initialize` hook.");
 			}
 
@@ -32,11 +32,11 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		// custom element lifecycle methods
-		connectedCallback() {
+		connectedCallback(props) {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (!lifecycleStatus.initialized) {
-				this.initialize();
+				this.initialize(props);
 			}
 
 			if (!lifecycleStatus.rendered) {
@@ -62,18 +62,28 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			this[inSetupSymbol] = false;
 		}
 
-		render() {
+		render(props) {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (!lifecycleStatus.initialized) {
-				this.initialize();
+				this.initialize(props);
 			}
 
 			lifecycleStatus.rendered = true;
 		}
 
-		connect() {
-			this[lifecycleStatusSymbol].connected = true;
+		connect(props) {
+			const lifecycleStatus = this[lifecycleStatusSymbol];
+
+			if (!lifecycleStatus.initialized) {
+				this.initialize(props);
+			}
+
+			if (!lifecycleStatus.rendered) {
+				this.render(props);
+			}
+
+			lifecycleStatus.connected = true;
 		}
 
 		disconnect() {
