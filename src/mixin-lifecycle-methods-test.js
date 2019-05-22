@@ -1,5 +1,6 @@
 const QUnit = require("steal-qunit");
 const mixinLifecycleMethods = require("./mixin-lifecycle-methods");
+const browserSupports = require("../test/browser-supports");
 
 const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
 const inSetupSymbol = Symbol.for("can.initializing");
@@ -22,7 +23,7 @@ QUnit.module("can-stache-define-element - mixin-lifecycle-methods");
 QUnit.test("connectedCallback calls hooks - initialize, render, connect", function(assert) {
 	assert.expect(16);
 
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		connectedCallback() {
 			super.connectedCallback();
 			assertStatuses(assert, this, {
@@ -63,7 +64,6 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 			super.connect();
 		}
 	}
-	customElements.define("connencted-callback-hook-el", Obj);
 
 	const obj = new Obj();
 	obj.connectedCallback();
@@ -73,7 +73,7 @@ QUnit.test("disconnectedCallback calls hooks - disconnect|teardown returned by c
 	assert.expect(18);
 
 	let obj;
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		disconnectedCallback() {
 			super.disconnectedCallback();
 			assertStatuses(assert, this, {
@@ -105,7 +105,6 @@ QUnit.test("disconnectedCallback calls hooks - disconnect|teardown returned by c
 			super.disconnect();
 		}
 	}
-	customElements.define("disconnencted-callback-hook-el", Obj);
 
 	obj = new Obj();
 	obj.connectedCallback();
@@ -119,41 +118,43 @@ QUnit.test("disconnectedCallback calls hooks - disconnect|teardown returned by c
 	obj.disconnectedCallback();
 });
 
-QUnit.test("lifecycle works with document.createElement", function(assert) {
-	const fixture = document.querySelector("#qunit-fixture");
+if (browserSupports.customElements) {
+	QUnit.test("lifecycle works with document.createElement", function(assert) {
+		const fixture = document.querySelector("#qunit-fixture");
 
-	class Obj extends mixinLifecycleMethods(HTMLElement) {}
-	customElements.define("created-el", Obj);
+		class Obj extends mixinLifecycleMethods(HTMLElement) {}
+		customElements.define("created-el", Obj);
 
-	const el = document.createElement("created-el");
-	assertStatuses(assert, el, {
-		initialized: false,
-		rendered: false,
-		connected: false,
-		disconnected: false
+		const el = document.createElement("created-el");
+		assertStatuses(assert, el, {
+			initialized: false,
+			rendered: false,
+			connected: false,
+			disconnected: false
+		});
+
+		fixture.appendChild(el);
+		assertStatuses(assert, el, {
+			initialized: true,
+			rendered: true,
+			connected: true,
+			disconnected: false
+		});
+
+		fixture.removeChild(el);
+		assertStatuses(assert, el, {
+			initialized: true,
+			rendered: true,
+			connected: true,
+			disconnected: true
+		});
 	});
-
-	fixture.appendChild(el);
-	assertStatuses(assert, el, {
-		initialized: true,
-		rendered: true,
-		connected: true,
-		disconnected: false
-	});
-
-	fixture.removeChild(el);
-	assertStatuses(assert, el, {
-		initialized: true,
-		rendered: true,
-		connected: true,
-		disconnected: true
-	});
-});
+}
 
 QUnit.test("events are not dispatched in initialize, are dispatched during render|connect", function(assert) {
 	assert.expect(3);
 
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		initialize() {
 			assert.equal(this[inSetupSymbol], true, "inSetupSymbol is true during initialize");
 			super.initialize();
@@ -169,7 +170,6 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 			super.connect();
 		}
 	}
-	customElements.define("event-dispatch-el", Obj);
 
 	const obj = new Obj();
 	obj.connectedCallback();
@@ -178,7 +178,7 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 QUnit.test("events are not dispatched in initialize, are dispatched during render|connect when methods are called directly", function(assert) {
 	assert.expect(3);
 
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		initialize() {
 			assert.equal(this[inSetupSymbol], true, "inSetupSymbol is true during initialize");
 			super.initialize();
@@ -194,7 +194,6 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 			super.connect();
 		}
 	}
-	customElements.define("event-dispatch-el-manual", Obj);
 
 	const obj = new Obj();
 	obj.initialize();
@@ -205,7 +204,7 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 QUnit.test("initialize, render, and connect are only called the first time connectedCallback is called", function(assert) {
 	assert.expect(3);
 
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		initialize() {
 			super.initialize();
 			assert.ok(true, "initialize");
@@ -221,7 +220,6 @@ QUnit.test("initialize, render, and connect are only called the first time conne
 			assert.ok(true, "connect");
 		}
 	}
-	customElements.define("connencted-twice-el", Obj);
 
 	const obj = new Obj();
 	obj.connectedCallback();
@@ -231,13 +229,12 @@ QUnit.test("initialize, render, and connect are only called the first time conne
 QUnit.test("disconnect is only called the first time disconnectedCallback is called", function(assert) {
 	assert.expect(1);
 
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		disconnect() {
 			super.disconnect();
 			assert.ok(true, "connect");
 		}
 	}
-	customElements.define("disconnencted-twice-el", Obj);
 
 	const obj = new Obj();
 	obj.disconnectedCallback();
@@ -247,7 +244,7 @@ QUnit.test("disconnect is only called the first time disconnectedCallback is cal
 QUnit.test("render calls initialize if it was not called", function(assert) {
 	assert.expect(2);
 
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		initialize() {
 			super.initialize();
 			assert.ok(true, "initialize");
@@ -258,15 +255,13 @@ QUnit.test("render calls initialize if it was not called", function(assert) {
 			assert.ok(true, "render");
 		}
 	}
-	customElements.define("render-calls-initialize-el", Obj);
 
 	const obj = new Obj();
 	obj.render();
 });
 
 QUnit.test("constructor throws if passed arguments", function(assert) {
-	class Obj extends mixinLifecycleMethods(HTMLElement) {}
-	customElements.define("constructor-arguments-el", Obj);
+	class Obj extends mixinLifecycleMethods(Object) {}
 
 	try {
 		new Obj({ foo: "bar" });
@@ -279,13 +274,12 @@ QUnit.test("initial props should always be passed to initialize", function(asser
 	assert.expect(4);
 
 	const props = { foo: "bar", baz: "bap" };
-	class Obj extends mixinLifecycleMethods(HTMLElement) {
+	class Obj extends mixinLifecycleMethods(Object) {
 		initialize(initializeProps) {
 			super.initialize();
 			assert.equal(initializeProps, props, "Correct props passed to initialize");
 		}
 	}
-	customElements.define("initialize-props-el", Obj);
 
 	const initializeObj = new Obj();
 	initializeObj.initialize(props);
