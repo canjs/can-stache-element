@@ -69,9 +69,10 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 	obj.connectedCallback();
 });
 
-QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
-	assert.expect(12);
+QUnit.test("disconnectedCallback calls hooks - disconnect|teardown returned by connect", function(assert) {
+	assert.expect(18);
 
+	let obj;
 	class Obj extends mixinLifecycleMethods(HTMLElement) {
 		disconnectedCallback() {
 			super.disconnectedCallback();
@@ -83,19 +84,30 @@ QUnit.test("disconnectedCallback calls hooks - disconnect", function(assert) {
 			});
 		}
 
-		disconnect() {
+		teardown() {
+			assert.equal(this, obj, "correct `this` in teardown handler");
+
 			assertStatuses(assert, this, {
 				initialized: true,
 				rendered: true,
 				connected: true,
 				disconnected: false
 			});
+		}
+
+		connect() {
+			super.connect();
+			return this.teardown;
+		}
+
+		disconnect() {
+			this.teardown();
 			super.disconnect();
 		}
 	}
 	customElements.define("disconnencted-callback-hook-el", Obj);
 
-	const obj = new Obj();
+	obj = new Obj();
 	obj.connectedCallback();
 	assertStatuses(assert, obj, {
 		initialized: true,

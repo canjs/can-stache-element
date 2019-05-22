@@ -2,6 +2,16 @@
 
 const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
 const inSetupSymbol = Symbol.for("can.initializing");
+const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
+
+function defineConfigurableNonEnumerable(obj, prop, value) {
+	Object.defineProperty(obj, prop, {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: value
+	});
+}
 
 module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 	return class LifecycleElement extends BaseElement {
@@ -12,23 +22,18 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			}
 
 			// add inSetup symbol to prevent events being dispatched
-			Object.defineProperty(this, inSetupSymbol, {
-				configurable: true,
-				enumerable: false,
-				value: true,
-				writable: true
-			});
+			defineConfigurableNonEnumerable(this, inSetupSymbol, true);
 
 			// add lifecycle status symbol
-			Object.defineProperty(this, lifecycleStatusSymbol, {
-				value: {
-					initialized: false,
-					rendered: false,
-					connected: false,
-					disconnected: false
-				},
-				enumerable: false
+			defineConfigurableNonEnumerable(this, lifecycleStatusSymbol, {
+				initialized: false,
+				rendered: false,
+				connected: false,
+				disconnected: false
 			});
+
+			// add a place to store additional teardownHandlers
+			defineConfigurableNonEnumerable(this, teardownHandlersSymbol, []);
 		}
 
 		// custom element lifecycle methods
@@ -44,7 +49,10 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			}
 
 			if (!lifecycleStatus.connected) {
-				this.connect();
+				let connectTeardown = this.connect();
+				if (connectTeardown) {
+					this[teardownHandlersSymbol].push(connectTeardown);
+				}
 			}
 		}
 
@@ -52,6 +60,9 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (!lifecycleStatus.disconnected) {
+				for (let handler of this[teardownHandlersSymbol]) {
+					handler.call(this);
+				}
 				this.disconnect();
 			}
 		}
