@@ -7,6 +7,7 @@
     "email": "contact@bitovi.com",
     "url": "http://bitovi.com"
   },
+  "browserslist": "ie 11",
   "bugs": {
     "url": "https://github.com/canjs/can-stache-define-element/issues"
   },
@@ -18,6 +19,9 @@
     "can-symbol": "^1.6.4"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
     "detect-cyclic-packages": "^1.1.0",
     "fixpack": "^2.3.1",
     "http-server": "^0.11.1",
@@ -32,18 +36,20 @@
     "CanJS"
   ],
   "license": "MIT",
-  "main": "can-stache-define-element.js",
+  "main": "dist/can-stache-define-element.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/canjs/can-stache-define-element.git"
   },
   "scripts": {
     "ci": "npm run test && node test/test-saucelabs.js",
+    "compile-to-es5": "babel src --out-dir dist",
     "detect-cycle": "detect-cyclic-packages",
     "http-server": "http-server -p 3000 --silent",
-    "jshint": "jshint ./*.js src/*.js test/*.js --config",
+    "jshint": "jshint src/*.js test/*.js --config",
     "lint": "fixpack && npm run jshint",
     "postversion": "git push --follow-tags",
+    "prepublishOnly": "npm run compile-to-es5",
     "preversion": "npm test",
     "test": "npm run detect-cycle && npm run lint && npm run testee",
     "testee": "testee test/test.html --browsers firefox"
