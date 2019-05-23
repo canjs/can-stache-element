@@ -1,9 +1,9 @@
 "use strict";
 
-const mixinLifecycleMethods = require("./src/mixin-lifecycle-methods");
-const mixinDefine = require("./src/mixin-define");
-const mixinStacheView = require("./src/mixin-stache-view");
-const mixinViewModelSymbol = require("./src/mixin-viewmodel-symbol");
+const mixinLifecycleMethods = require("./mixin-lifecycle-methods");
+const mixinDefine = require("./mixin-define");
+const mixinStacheView = require("./mixin-stache-view");
+const mixinViewModelSymbol = require("./mixin-viewmodel-symbol");
 
 function DeriveElement(BaseElement = HTMLElement) {
 	return class StacheDefineElement extends

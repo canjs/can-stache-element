@@ -1,6 +1,6 @@
 const QUnit = require("steal-qunit");
 const StacheDefineElement = require("./can-stache-define-element");
-const browserSupports = require("./test/browser-supports");
+const browserSupports = require("../test/browser-supports");
 
 QUnit.module("can-stache-define-element");
 
