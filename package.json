@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "can-define-lazy-value": "^1.1.0",
-    "can-define-mixin": "^0.1.0",
+    "can-define-mixin": "^0.2.0",
     "can-stache": "^4.0.0",
     "can-stache-bindings": "^4.0.0",
     "can-symbol": "^1.6.4"
