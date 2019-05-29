@@ -5,6 +5,11 @@ const mixinDefine = require("./mixin-define");
 const mixinStacheView = require("./mixin-stache-view");
 const mixinViewModelSymbol = require("./mixin-viewmodel-symbol");
 
+const canStacheBindings = require("can-stache-bindings");
+
+const initializeSymbol = Symbol.for("can.initialize");
+const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
+
 function DeriveElement(BaseElement = HTMLElement) {
 	return class StacheDefineElement extends
 	// mix in viewModel symbol used by can-stache-bindings
@@ -18,7 +23,22 @@ function DeriveElement(BaseElement = HTMLElement) {
 				mixinLifecycleMethods(BaseElement)
 			)
 		)
-	) {};
+	) {
+		[initializeSymbol](el, tagData) {
+			const teardownBindings = canStacheBindings.behaviors.viewModel(
+				el,
+				tagData,
+				function makeViewModel(initialViewmodelData) {
+					el.render(initialViewmodelData, {}, tagData.parentNodeList);
+					return el;
+				}
+			);
+
+			if (el[teardownHandlersSymbol]) {
+				el[teardownHandlersSymbol].push(teardownBindings);
+			}
+		}
+	};
 }
 
 module.exports = DeriveElement();

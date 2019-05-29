@@ -293,3 +293,14 @@ QUnit.test("initial props should always be passed to initialize", function(asser
 	const connectedCallbackObj = new Obj();
 	connectedCallbackObj.connectedCallback(props);
 });
+
+QUnit.test("disconnectedCallback calls el.stopListening", function(assert) {
+	class Obj extends mixinLifecycleMethods(Object) {
+		stopListening() {
+			assert.ok(true, "stopListening called");
+		}
+	}
+
+	const obj = new Obj();
+	obj.disconnectedCallback();
+});

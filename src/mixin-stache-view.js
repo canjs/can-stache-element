@@ -2,18 +2,31 @@
 
 const stache = require("can-stache");
 
-// make bindings work
+// make sure bindings work
 require("can-stache-bindings");
+
+const rendererSymbol = Symbol.for("can.stacheRenderer");
 
 module.exports = function mixinStacheView(Base = HTMLElement) {
 	return class StacheClass extends Base {
-		render() {
+		render(props, renderOptions, parentNodeList) {
 			if(super.render) {
-				super.render();
+				super.render(props);
 			}
-			const staticView = this.constructor.view;
-			const renderer = stache(staticView/* NODELIST */);
-			const frag = renderer(this);
+
+			let renderer = this.constructor[rendererSymbol];
+
+			if (!renderer) {
+				const view = this.constructor.view;
+
+				renderer = typeof view === "string" ?
+					stache(view) :
+					view;
+
+				this.constructor[rendererSymbol] = renderer;
+			}
+
+			const frag = renderer(this, renderOptions, parentNodeList);
 			const viewRoot = this.viewRoot || this;
 			viewRoot.appendChild( frag );
 		}

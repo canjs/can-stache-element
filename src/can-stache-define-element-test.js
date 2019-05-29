@@ -1,4 +1,6 @@
 const QUnit = require("steal-qunit");
+const Scope = require("can-view-scope");
+const viewCallbacks = require("can-view-callbacks");
 const StacheDefineElement = require("./can-stache-define-element");
 const browserSupports = require("../test/browser-supports");
 
@@ -68,5 +70,24 @@ if (browserSupports.customElements) {
 		lastNameInput.value = "McFly";
 		lastNameInput.dispatchEvent(new Event("change"));
 		assert.equal(fullNameP.innerHTML, "Marty McFly", "fullName paragraph changes when lastName input changes");
+	});
+
+	QUnit.test("can be rendered by canViewCallbacks.tagHandler", function(assert) {
+		class App extends StacheDefineElement {
+			static get view() {
+				return "Hello {{greeting}}";
+			}
+		}
+		customElements.define("stache-viewcallbacks-app", App);
+		const el = document.createElement("stache-viewcallbacks-app");
+		el.setAttribute("greeting:bind", "greeting");
+
+		const scope = new Scope({ greeting: "World" });
+
+		viewCallbacks.tagHandler(el, "stache-viewcallbacks-app", {
+			scope: scope
+		});
+
+		assert.equal(el.innerHTML, "Hello World");
 	});
 }

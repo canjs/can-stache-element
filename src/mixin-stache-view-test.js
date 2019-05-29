@@ -1,4 +1,5 @@
 const QUnit = require("steal-qunit");
+const stache = require("can-stache");
 const mixinStacheView = require("./mixin-stache-view");
 const browserSupports = require("../test/browser-supports");
 
@@ -10,12 +11,12 @@ if (browserSupports.customElements) {
 
 		class App extends StacheElement {
 			static get view() {
-				return "Hello {{greeting}}";
+				return "{{greeting}} World";
 			}
 
 			constructor() {
 				super();
-				this.greeting = "World";
+				this.greeting = "Hello";
 			}
 		}
 		customElements.define("stache-app", App);
@@ -34,13 +35,13 @@ if (browserSupports.customElements) {
 
 			class App extends StacheElement {
 				static get view() {
-					return "Hello {{greeting}}";
+					return "{{greeting}} World";
 				}
 
 				constructor() {
 					super();
 					this.viewRoot = this.attachShadow({ mode: "open" });
-					this.greeting = "World";
+					this.greeting = "Hello";
 				}
 			}
 			customElements.define("stache-shadow-dom-app", App);
@@ -53,4 +54,75 @@ if (browserSupports.customElements) {
 			assert.equal(app.shadowRoot.innerHTML, "Hello World", "render method renders the static `view` property as stache");
 		});
 	}
+
+	QUnit.test("caches renderer function", function(assert) {
+		assert.expect(3);
+
+		class App extends mixinStacheView(HTMLElement) {
+			static get view() {
+				assert.ok(true, "view property read");
+				return "{{greeting}} World";
+			}
+
+			constructor() {
+				super();
+				this.greeting = "Hello";
+			}
+		}
+		customElements.define("stache-caches-view-app", App);
+
+		const app = new App();
+		app.render();
+		assert.equal(app.innerHTML, "Hello World", "renders first app");
+
+		const app2 = new App();
+		app2.render();
+		assert.equal(app2.innerHTML, "Hello World", "renders second app");
+	});
+
+	QUnit.test("can be passed a renderer function as the view", function(assert) {
+		const renderer = stache("{{greeting}} World");
+
+		class App extends mixinStacheView(HTMLElement) {
+			static get view() {
+				return renderer;
+			}
+
+			constructor() {
+				super();
+				this.greeting = "Hello";
+			}
+		}
+		customElements.define("stache-renderer-app", App);
+
+		const app = new App();
+		app.render();
+
+		assert.equal(app.innerHTML, "Hello World", "render method renders the static `view` property as stache");
+	});
+
+	QUnit.test("renderer is passed options object and nodelist if provided", function(assert) {
+		const options = { some: "options" };
+		const nodelist = { a: "nodelist" };
+
+		const renderer = function(el, optionsArg, nodelistArg) {
+			assert.equal(optionsArg, options, "options");
+			assert.equal(nodelistArg, nodelist, "nodelist");
+			return document.createElement("p");
+		};
+
+		class App extends mixinStacheView(HTMLElement) {
+			static get view() {
+				return renderer;
+			}
+
+			constructor() {
+				super();
+			}
+		}
+		customElements.define("stache-renderer-args-app", App);
+
+		const app = new App();
+		app.render({}, options, nodelist);
+	});
 }
