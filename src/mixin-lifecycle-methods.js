@@ -63,6 +63,11 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 				for (let handler of this[teardownHandlersSymbol]) {
 					handler.call(this);
 				}
+
+				if (this.stopListening) {
+					this.stopListening();
+				}
+
 				this.disconnect();
 			}
 		}
