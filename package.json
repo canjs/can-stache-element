@@ -52,7 +52,7 @@
     "jshint": "jshint src/*.js test/*.js --config",
     "lint": "fixpack && npm run jshint",
     "postversion": "git push --follow-tags",
-    "prepublish": "npm run compile-to-es5",
+    "prepare": "npm run compile-to-es5",
     "preversion": "npm test",
     "test": "npm run detect-cycle && npm run lint && npm run testee",
     "testee": "testee test/test.html --browsers firefox"
