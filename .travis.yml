@@ -18,3 +18,4 @@ deploy:
   on:
     tags: true
     repo: canjs/can-stache-define-element
+  skip_cleanup: true
