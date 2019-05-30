@@ -61,7 +61,6 @@ QUnit.test("connectedCallback calls hooks - initialize, render, connect", functi
 				connected: false,
 				disconnected: false
 			});
-			super.connect();
 		}
 	}
 
@@ -96,13 +95,11 @@ QUnit.test("disconnectedCallback calls hooks - disconnect|teardown returned by c
 		}
 
 		connect() {
-			super.connect();
 			return this.teardown;
 		}
 
 		disconnect() {
 			this.teardown();
-			super.disconnect();
 		}
 	}
 
@@ -166,8 +163,7 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 		}
 
 		connect() {
-			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during render");
-			super.connect();
+			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during connect");
 		}
 	}
 
@@ -190,8 +186,7 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 		}
 
 		connect() {
-			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during render");
-			super.connect();
+			assert.equal(this[inSetupSymbol], false, "inSetupSymbol is false during connect");
 		}
 	}
 
@@ -216,7 +211,6 @@ QUnit.test("initialize, render, and connect are only called the first time conne
 		}
 
 		connect() {
-			super.connect();
 			assert.ok(true, "connect");
 		}
 	}
@@ -231,7 +225,6 @@ QUnit.test("disconnect is only called the first time disconnectedCallback is cal
 
 	class Obj extends mixinLifecycleMethods(Object) {
 		disconnect() {
-			super.disconnect();
 			assert.ok(true, "connect");
 		}
 	}

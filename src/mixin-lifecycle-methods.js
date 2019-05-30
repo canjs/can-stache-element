@@ -3,6 +3,7 @@
 const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
 const inSetupSymbol = Symbol.for("can.initializing");
 const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
+const methodWrappedSymbol = Symbol.for("can.methodWrapped");
 
 function defineConfigurableNonEnumerable(obj, prop, value) {
 	Object.defineProperty(obj, prop, {
@@ -11,6 +12,36 @@ function defineConfigurableNonEnumerable(obj, prop, value) {
 		writable: true,
 		value: value
 	});
+}
+
+function wrapPrototypeMethod(proto, methodName, after, before) {
+	if (proto.hasOwnProperty(methodName)) {
+		const origMethod = proto[methodName];
+
+		if (origMethod[methodWrappedSymbol]) {
+			// method is already wrapped, don't do it again
+			return;
+		}
+
+		const wrappedMethod = function(...args) {
+			if (before) {
+				before.apply(this, ...args);
+			}
+
+			let origResult = origMethod.apply(this, ...args);
+
+			if (after) {
+				after.apply(this, ...args);
+			}
+
+			return origResult;
+		};
+
+		// make sure this method is only wrapped the first time
+		// an instance is created
+		wrappedMethod[methodWrappedSymbol] = true;
+		proto[methodName] = wrappedMethod;
+	}
 }
 
 module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
@@ -34,6 +65,11 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 
 			// add a place to store additional teardownHandlers
 			defineConfigurableNonEnumerable(this, teardownHandlersSymbol, []);
+
+			// wrap `connect` and `disconnect` so user can implement them without having to call
+			// `super.connect(...args)` in their implementation
+			wrapPrototypeMethod(this.constructor.prototype, "connect", this._afterConnect, this._beforeConnect);
+			wrapPrototypeMethod(this.constructor.prototype, "disconnect", this._afterDisconnect);
 		}
 
 		// custom element lifecycle methods
@@ -89,6 +125,11 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		connect(props) {
+			this._beforeConnect(props);
+			this._afterConnect();
+		}
+
+		_beforeConnect(props) {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (!lifecycleStatus.initialized) {
@@ -98,11 +139,18 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			if (!lifecycleStatus.rendered) {
 				this.render(props);
 			}
+		}
 
+		_afterConnect() {
+			const lifecycleStatus = this[lifecycleStatusSymbol];
 			lifecycleStatus.connected = true;
 		}
 
 		disconnect() {
+			this._afterDisconnect();
+		}
+
+		_afterDisconnect() {
 			this[lifecycleStatusSymbol].disconnected = true;
 		}
 	};
