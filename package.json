@@ -45,14 +45,13 @@
     "url": "git://github.com/canjs/can-stache-define-element.git"
   },
   "scripts": {
-    "ci": "npm run test && node test/test-saucelabs.js",
+    "ci": "npm run test && node test/test-saucelabs.js && npm run compile-to-es5",
     "compile-to-es5": "babel src --out-dir dist",
     "detect-cycle": "detect-cyclic-packages",
     "http-server": "http-server -p 3000 --silent",
     "jshint": "jshint src/*.js test/*.js --config",
     "lint": "fixpack && npm run jshint",
     "postversion": "git push --follow-tags",
-    "prepare": "npm run compile-to-es5",
     "preversion": "npm test",
     "test": "npm run detect-cycle && npm run lint && npm run testee",
     "testee": "testee test/test.html --browsers firefox"
