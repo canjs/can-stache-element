@@ -12,15 +12,17 @@ const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
 
 function DeriveElement(BaseElement = HTMLElement) {
 	return class StacheDefineElement extends
-	// mix in viewModel symbol used by can-stache-bindings
-	mixinViewModelSymbol(
-		// mix in stache renderer from `static view` property
-		mixinStacheView(
-			// add getters/setters from `static define` property
-			mixinDefine(
-				// add lifecycle hooks to BaseElement
-				// this needs to happen before other mixins that use these hooks
-				mixinLifecycleMethods(BaseElement)
+	// add lifecycle methods
+	// this needs to happen after other mixins that implement these methods
+	// so that this.<lifecycleMethod> is the actual lifecycle method which
+	// controls whether the methods farther "down" the chain are called
+	mixinLifecycleMethods(
+		// mix in viewModel symbol used by can-stache-bindings
+		mixinViewModelSymbol(
+			// mix in stache renderer from `static view` property
+			mixinStacheView(
+				// add getters/setters from `static define` property
+				mixinDefine(BaseElement)
 			)
 		)
 	) {

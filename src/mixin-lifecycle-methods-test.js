@@ -2,149 +2,90 @@ const QUnit = require("steal-qunit");
 const mixinLifecycleMethods = require("./mixin-lifecycle-methods");
 const browserSupports = require("../test/browser-supports");
 
-const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
 const inSetupSymbol = Symbol.for("can.initializing");
-
-function assertStatuses(assert, obj, expected) {
-	const lifecycleStatus = obj[lifecycleStatusSymbol];
-
-	[
-		"initialized",
-		"rendered",
-		"connected",
-		"disconnected"
-	].forEach(function(status) {
-		assert.equal(lifecycleStatus[status], expected[status], status + " should be " + expected[status]);
-	});
-}
 
 QUnit.module("can-stache-define-element - mixin-lifecycle-methods");
 
 QUnit.test("connectedCallback calls hooks - initialize, render, connect", function(assert) {
-	assert.expect(16);
+	assert.expect(3);
 
-	class Obj extends mixinLifecycleMethods(Object) {
-		connectedCallback() {
-			super.connectedCallback();
-			assertStatuses(assert, this, {
-				initialized: true,
-				rendered: true,
-				connected: true,
-				disconnected: false
-			});
-		}
-
+	class Obj {
 		initialize() {
-			assertStatuses(assert, this, {
-				initialized: false,
-				rendered: false,
-				connected: false,
-				disconnected: false
-			});
-			super.initialize();
+			assert.ok(true, "initialize called");
 		}
 
 		render() {
-			assertStatuses(assert, this, {
-				initialized: true,
-				rendered: false,
-				connected: false,
-				disconnected: false
-			});
-			super.render();
+			assert.ok(true, "render called");
 		}
 
 		connect() {
-			assertStatuses(assert, this, {
-				initialized: true,
-				rendered: true,
-				connected: false,
-				disconnected: false
-			});
+			assert.ok(true, "connect called");
 		}
 	}
 
-	const obj = new Obj();
+	const LifecycleObj = mixinLifecycleMethods(Obj);
+
+	const obj = new LifecycleObj();
 	obj.connectedCallback();
 });
 
-QUnit.test("disconnectedCallback calls hooks - disconnect|teardown returned by connect", function(assert) {
-	assert.expect(18);
+QUnit.test("disconnectedCallback calls disconnect, teardown returned by connected, and stopListening", function(assert) {
+	assert.expect(3);
 
 	let obj;
-	class Obj extends mixinLifecycleMethods(Object) {
-		disconnectedCallback() {
-			super.disconnectedCallback();
-			assertStatuses(assert, this, {
-				initialized: true,
-				rendered: true,
-				connected: true,
-				disconnected: true
-			});
-		}
-
-		teardown() {
-			assert.equal(this, obj, "correct `this` in teardown handler");
-
-			assertStatuses(assert, this, {
-				initialized: true,
-				rendered: true,
-				connected: true,
-				disconnected: false
-			});
-		}
-
-		connect() {
-			return this.teardown;
+	class Obj {
+		connected() {
+			return function() {
+				assert.ok(true, "teardown handler returned from `connect` is called");
+			};
 		}
 
 		disconnect() {
-			this.teardown();
+			assert.ok(true, "disconnect called");
+		}
+
+		stopListening() {
+			assert.ok(true, "stopListening called");
 		}
 	}
 
-	obj = new Obj();
-	obj.connectedCallback();
-	assertStatuses(assert, obj, {
-		initialized: true,
-		rendered: true,
-		connected: true,
-		disconnected: false
-	});
+	const LifecycleObj = mixinLifecycleMethods(Obj);
 
+	obj = new LifecycleObj();
+	obj.connectedCallback();
 	obj.disconnectedCallback();
 });
 
 if (browserSupports.customElements) {
 	QUnit.test("lifecycle works with document.createElement", function(assert) {
+		assert.expect(4);
 		const fixture = document.querySelector("#qunit-fixture");
 
-		class Obj extends mixinLifecycleMethods(HTMLElement) {}
-		customElements.define("created-el", Obj);
+		class Obj extends HTMLElement {
+			initialize() {
+				assert.ok(true, "initialize called");
+			}
+
+			render() {
+				assert.ok(true, "render called");
+			}
+
+			connect() {
+				assert.ok(true, "connect called");
+			}
+
+			disconnect() {
+				assert.ok(true, "disconnect called");
+			}
+		}
+
+		const LifecycleObj = mixinLifecycleMethods(Obj);
+
+		customElements.define("created-el", LifecycleObj);
 
 		const el = document.createElement("created-el");
-		assertStatuses(assert, el, {
-			initialized: false,
-			rendered: false,
-			connected: false,
-			disconnected: false
-		});
-
 		fixture.appendChild(el);
-		assertStatuses(assert, el, {
-			initialized: true,
-			rendered: true,
-			connected: true,
-			disconnected: false
-		});
-
 		fixture.removeChild(el);
-		assertStatuses(assert, el, {
-			initialized: true,
-			rendered: true,
-			connected: true,
-			disconnected: true
-		});
 	});
 }
 
@@ -199,14 +140,12 @@ QUnit.test("events are not dispatched in initialize, are dispatched during rende
 QUnit.test("initialize, render, and connect are only called the first time connectedCallback is called", function(assert) {
 	assert.expect(3);
 
-	class Obj extends mixinLifecycleMethods(Object) {
+	class Obj {
 		initialize() {
-			super.initialize();
 			assert.ok(true, "initialize");
 		}
 
 		render() {
-			super.render();
 			assert.ok(true, "render");
 		}
 
@@ -215,7 +154,9 @@ QUnit.test("initialize, render, and connect are only called the first time conne
 		}
 	}
 
-	const obj = new Obj();
+	const LifecycleObj = mixinLifecycleMethods(Obj);
+
+	const obj = new LifecycleObj();
 	obj.connectedCallback();
 	obj.connectedCallback();
 });
@@ -223,13 +164,14 @@ QUnit.test("initialize, render, and connect are only called the first time conne
 QUnit.test("disconnect is only called the first time disconnectedCallback is called", function(assert) {
 	assert.expect(1);
 
-	class Obj extends mixinLifecycleMethods(Object) {
+	class Obj {
 		disconnect() {
 			assert.ok(true, "connect");
 		}
 	}
+	const LifecycleObj = mixinLifecycleMethods(Obj);
 
-	const obj = new Obj();
+	const obj = new LifecycleObj();
 	obj.disconnectedCallback();
 	obj.disconnectedCallback();
 });
@@ -287,13 +229,28 @@ QUnit.test("initial props should always be passed to initialize", function(asser
 	connectedCallbackObj.connectedCallback(props);
 });
 
-QUnit.test("disconnectedCallback calls el.stopListening", function(assert) {
+QUnit.test("connect calls `connected` hook", function(assert) {
+	assert.expect(1);
+
 	class Obj extends mixinLifecycleMethods(Object) {
-		stopListening() {
-			assert.ok(true, "stopListening called");
+		connected() {
+			assert.ok(true, "connected hook called");
 		}
 	}
 
 	const obj = new Obj();
-	obj.disconnectedCallback();
+	obj.connect();
+});
+
+QUnit.test("disconnect calls `disconnected` hook", function(assert) {
+	assert.expect(1);
+
+	class Obj extends mixinLifecycleMethods(Object) {
+		disconnected() {
+			assert.ok(true, "disconnected hook called");
+		}
+	}
+
+	const obj = new Obj();
+	obj.disconnect();
 });
