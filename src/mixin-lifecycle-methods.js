@@ -44,20 +44,6 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		disconnectedCallback() {
-			const lifecycleStatus = this[lifecycleStatusSymbol];
-
-			if (lifecycleStatus.disconnected) {
-				return;
-			}
-
-			for (let handler of this[teardownHandlersSymbol]) {
-				handler.call(this);
-			}
-
-			if (this.stopListening) {
-				this.stopListening();
-			}
-
 			this.disconnect();
 		}
 
@@ -134,6 +120,14 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 
 			if (super.disconnect) {
 				super.disconnect();
+			}
+
+			if (this.stopListening) {
+				this.stopListening();
+			}
+
+			for (let handler of this[teardownHandlersSymbol]) {
+				handler.call(this);
 			}
 
 			if (this.disconnected) {
