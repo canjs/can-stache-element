@@ -11,7 +11,7 @@ const initializeSymbol = Symbol.for("can.initialize");
 const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
 
 function DeriveElement(BaseElement = HTMLElement) {
-	return class StacheDefineElement extends
+	class StacheDefineElement extends
 	// add lifecycle methods
 	// this needs to happen after other mixins that implement these methods
 	// so that this.<lifecycleMethod> is the actual lifecycle method which
@@ -40,7 +40,17 @@ function DeriveElement(BaseElement = HTMLElement) {
 				el[teardownHandlersSymbol].push(teardownBindings);
 			}
 		}
-	};
+	}
+
+	function StacheDefineElementConstructorFunction() {
+		const self = Reflect.construct(StacheDefineElement, arguments, this.constructor);
+		return self;
+	}
+
+	StacheDefineElementConstructorFunction.prototype = Object.create(StacheDefineElement.prototype);
+	StacheDefineElementConstructorFunction.prototype.constructor = StacheDefineElementConstructorFunction;
+
+	return StacheDefineElementConstructorFunction;
 }
 
 module.exports = DeriveElement();
