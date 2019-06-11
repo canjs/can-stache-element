@@ -16,10 +16,13 @@ class TodoItem extends StacheDefineElement {
 }
 customElements.define("todo-item", TodoItem);
 
-const todo = new TodoItem({ name: "go grocery shopping" });
-todo.render(); // `render` must be called for view to be rendered into element
+const todo = new TodoItem();
 
-todo.innerHTML; // -> <p>go grocery shopping><input type="checkbox">
+// `render` must be called for view to be rendered into element
+todo.render({ name: "go grocery shopping" });
+
+todo.innerHTML // -> <p>go grocery shopping</p>
+               //    <input type="checkbox" checked:bind="complete">
 ```
 
 > Note: to see all the options supported by `view`, see [can-stache].
@@ -39,10 +42,13 @@ class TodoItem extends StacheDefineElement {
 }
 customElements.define("todo-item", TodoItem);
 
-const todo = new TodoItem({ name: "go grocery shopping" });
-todo.render(); // `render` must be called for view to be rendered into element
+const todo = new TodoItem();
 
-todo.innerHTML; // -> <p>go grocery shopping><input type="checkbox">
+// `render` must be called for view to be rendered into element
+todo.render({ name: "go grocery shopping" });
+
+todo.innerHTML // -> <p>go grocery shopping</p>
+               //    <input type="checkbox" checked:bind="complete">
 ```
 
 > Note: to see all the options supported by `view`, see [can-stache].

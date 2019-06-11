@@ -16,8 +16,9 @@ class TodoItem extends StacheDefineElement {
 }
 customElements.define("todo-item", TodoItem);
 
-const todo = new TodoItem({ name: "go grocery shopping" });
-todo.initialize(); // `initialize` must be called for properties to be defined correctly
+const todo = new TodoItem();
+// `initialize` must be called for properties to be defined correctly
+todo.initialize({ name: "go grocery shopping" });
 
 todo.name; // -> "go grocery shopping"
 todo.completed; // -> false
@@ -40,8 +41,9 @@ class TodoItem extends StacheDefineElement {
 }
 customElements.define("todo-item", TodoItem);
 
-const todo = new TodoItem({ name: "go grocery shopping" });
-todo.initialize(); // `initialize` must be called for properties to be defined correctly
+const todo = new TodoItem();
+// `initialize` must be called for properties to be defined correctly
+todo.initialize({ name: "go grocery shopping" });
 
 todo.name; // -> "go grocery shopping"
 todo.completed; // -> false

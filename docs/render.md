@@ -21,7 +21,7 @@ customElements.define("my-el", MyElement);
 const myEl = new MyElement();
 myEl.render({ age: 32 });
 
-myEl.age // -> 32
+myEl.age               // -> 32
 myEl.firstElementChild // -> <p>32</p>
 ```
 
