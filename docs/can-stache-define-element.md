@@ -23,7 +23,7 @@
   The following defines a  `<my-counter>` element:
 
   ```js
-  class MyCounter extends StacheDefineElement {
+  class Counter extends StacheDefineElement {
 	  static view = `
 		  Count: <span>{{this.count}}</span>
 		  <button on:click="this.increment()">+1</button>
@@ -35,7 +35,7 @@
 		  this.count++;
 	  }
   }
-  customElements.define("my-counter", MyCounter);
+  customElements.define("my-counter", Counter);
   ```
 
   To create a component instance, either:
@@ -160,10 +160,10 @@ To test an element's view, call the [can-stache-define-element/lifecycle-methods
 const counter = new Counter();
 counter.render({ count: 20 });
 
-counter.firstElementChild.innerHTML === 20; // -> true
+counter.firstElementChild.innerHTML === "20"; // -> true
 
 counter.increment();
-counter.firstElementChild.innerHTML === 21; // -> true
+counter.firstElementChild.innerHTML === "21"; // -> true
 ```
 @highlight 2
 

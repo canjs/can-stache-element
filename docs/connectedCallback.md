@@ -13,7 +13,7 @@ class MyElement extends StacheDefineElement {
 		<p>{{greeting}}</p>
 	`;
 	static define = {
-		age: { type: String, default: Hello }
+		age: { type: String, default: "Hello" }
 	};
 	connected() {
 		const p = document.createElement("p");
@@ -26,8 +26,9 @@ customElements.define("my-el", MyElement);
 const myEl = new MyElement();
 myEl.connectedCallback({ greeting: "Hi" });
 
-myEl.greeting // -> Hi
-myEl.firstElementChild // -> <p>Hi</p><p>World</p>
+myEl.greeting          // -> Hi
+myEl.firstElementChild // -> <p>Hi</p>
+                       //    <p>World</p>
 ```
 
 	@param {Object} props The initial property values.

@@ -12,9 +12,9 @@ class MyElement extends StacheDefineElement {
 	disconnected() {
 		fetch("/api/log", {
 			method: "POST",
-			body: {
+			body: JSON.stringify({
 				msg: "my-el was removed from the page"
-			}
+			})
 		});
 	}
 }

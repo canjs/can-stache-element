@@ -19,9 +19,9 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 			if (!renderer) {
 				const view = this.constructor.view;
 
-				renderer = typeof view === "string" ?
-					stache(view) :
-					view;
+				renderer = typeof view === "function" ?
+					view :
+					stache(view || "");
 
 				this.constructor[rendererSymbol] = renderer;
 			}

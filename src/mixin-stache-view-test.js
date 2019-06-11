@@ -125,4 +125,13 @@ if (browserSupports.customElements) {
 		const app = new App();
 		app.render({}, options, nodelist);
 	});
+
+	QUnit.test("element works without a `view`", function(assert) {
+		class App extends mixinStacheView(HTMLElement) {}
+		customElements.define("stache-no-renderer-app", App);
+
+		const app = new App();
+		app.render({});
+		assert.ok(true, "doesn't throw");
+	});
 }
