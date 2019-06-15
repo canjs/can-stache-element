@@ -55,6 +55,10 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 				return;
 			}
 
+			// Overwrite ... this means that this initialize
+			// can't be inherited (super.initialize).
+			this[inSetupSymbol] = true;
+
 			if (super.initialize) {
 				super.initialize(props);
 			}

@@ -2,6 +2,7 @@ const QUnit = require("steal-qunit");
 const stache = require("can-stache");
 const mixinStacheView = require("./mixin-stache-view");
 const browserSupports = require("../test/browser-supports");
+const nodeLists = require("can-view-nodelist");
 
 QUnit.module("can-stache-define-element - mixin-stache-view");
 
@@ -103,11 +104,11 @@ if (browserSupports.customElements) {
 
 	QUnit.test("renderer is passed options object and nodelist if provided", function(assert) {
 		const options = { some: "options" };
-		const nodelist = { a: "nodelist" };
+		const nodelist = nodeLists.register([], function(){}, true, false);
 
 		const renderer = function(el, optionsArg, nodelistArg) {
 			assert.equal(optionsArg, options, "options");
-			assert.equal(nodelistArg, nodelist, "nodelist");
+			assert.deepEqual(nodelistArg, nodelist, "nodelist like object");
 			return document.createElement("p");
 		};
 
