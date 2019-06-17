@@ -59,7 +59,7 @@ if (browserSupports.customElements) {
 		basicBindingsElement.message = "Hola!";
 
 		assert.equal(messageObservable.value, "Hola!", "observable updated via two-way binding");
-		debugger;
+		
 		// REMOVE ELEMENT
 		fixture.removeChild(basicBindingsElement);
 
