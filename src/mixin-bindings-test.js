@@ -59,7 +59,7 @@ if (browserSupports.customElements) {
 		basicBindingsElement.message = "Hola!";
 
 		assert.equal(messageObservable.value, "Hola!", "observable updated via two-way binding");
-
+		debugger;
 		// REMOVE ELEMENT
 		fixture.removeChild(basicBindingsElement);
 
@@ -77,7 +77,7 @@ if (browserSupports.customElements) {
 		messageObservable.value = "GOODBYE";
 
 		fixture.appendChild(basicBindingsElement);
-		assert.equal(basicBindingsElement.message, "GOODBYE", "properties initialized");
+		assert.equal(basicBindingsElement.message, "GOODBYE", "properties initialized after re-insertion");
 		assert.equal(basicBindingsElement.innerHTML, "<h1>GOODBYE</h1>", "template rendered" );
 
 	});

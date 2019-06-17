@@ -11,21 +11,26 @@ require("can-stache-bindings");
 const getValueSymbol = Symbol.for("can.getValue");
 const setValueSymbol = Symbol.for("can.setValue");
 const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
+const metaSymbol = Symbol.for("can.meta");
 
 module.exports = function mixinBindings(Base = HTMLElement) {
 	return class BindingsClass extends Base {
 		bindings(bindings) {
-			this._bindings = bindings;
+			if(this[metaSymbol] === undefined) {
+				this[metaSymbol] = {};
+			}
+			this[metaSymbol]._connectedBindings = bindings;
 		}
 		initialize(props) {
-			if (this._bindings) {
+			var savedBindings = this[metaSymbol] && this[metaSymbol]._connectedBindings;
+			if (savedBindings) {
 				props = props || {};
 				const bindingContext = {
 					element: this
 				};
 				const bindings = [];
 
-				canReflect.eachKey(this._bindings, (parent, propName) => {
+				canReflect.eachKey(savedBindings, (parent, propName) => {
 
 					var canGetParentValue = parent != null && !!parent[getValueSymbol];
 					var canSetParentValue = parent != null && !!parent[setValueSymbol];
@@ -79,12 +84,13 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 					return this;
 				}, bindingContext);
 
-
-				this._bindingsTeardown = function() {
+				this[metaSymbol]._connectedBindingsTeardown = function() {
 					for (var attrName in initializeData.onTeardowns) {
 						initializeData.onTeardowns[attrName]();
 					}
 				};
+
+				this[metaSymbol].other = true;
 			}
 
 		}
@@ -97,16 +103,15 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 			}
 		}
 		disconnect() {
-			if(this._bindingsTeardown) {
-				this._bindingsTeardown();
-				this._bindingsTeardown = null;
+			if(this[metaSymbol] && this[metaSymbol]._connectedBindingsTeardown) {
+				this[metaSymbol]._connectedBindingsTeardown();
+				this[metaSymbol]._connectedBindingsTeardown = null;
 				this[lifecycleStatusSymbol] = {
 					initialized: false,
 					rendered: false,
 					connected: false,
 					disconnected: true
 				};
-
 			}
 			if (super.disconnect) {
 				super.disconnect();

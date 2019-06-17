@@ -15,7 +15,7 @@
     "can-bind": "^1.4.3",
     "can-child-nodes": "^1.2.1",
     "can-define-lazy-value": "^1.1.0",
-    "can-define-mixin": "^0.2.5",
+    "can-define-mixin": "<2.0.0",
     "can-simple-observable": "^2.4.2",
     "can-stache": "^4.0.0",
     "can-stache-bindings": "^4.0.0",
