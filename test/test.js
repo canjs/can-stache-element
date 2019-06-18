@@ -4,3 +4,4 @@ import "../src/mixin-lifecycle-methods-test";
 import "../src/mixin-stache-view-test";
 import "../src/mixin-viewmodel-symbol-test";
 import "../src/import-export-steal-test";
+import "../src/mixin-bindings-test";
