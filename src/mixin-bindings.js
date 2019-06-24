@@ -91,8 +91,11 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 				};
 
 				this[metaSymbol].other = true;
+			} else {
+				if (super.initialize) {
+					super.initialize(props);
+				}
 			}
-
 		}
 		render(props, renderOptions, parentNodeList) {
 			const viewRoot = this.viewRoot || this;

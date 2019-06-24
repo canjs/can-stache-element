@@ -90,4 +90,18 @@ if (browserSupports.customElements) {
 
 		assert.equal(el.innerHTML, "Hello World");
 	});
+
+	QUnit.test("Can initialize with el.initialize()", function(assert) {
+		class Component extends StacheDefineElement {
+			static get define() {
+				return {
+					prop: "default"
+				};
+			}
+		}
+		customElements.define("stache-component-initialized", Component);
+		const el = new Component();
+		el.initialize({ prop: "value" });
+		assert.equal(el.prop, "value", "initialized with values provided to initialize");
+	});
 }
