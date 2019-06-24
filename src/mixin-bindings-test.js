@@ -146,6 +146,7 @@ if (browserSupports.customElements) {
 					elementPromise: {
 						get() {
 							return new Promise((resolve) => {
+								console.log('agg', this.id)
 								let child = this.id === 1 ? new One() : new Two();
 								child.bindings({ id: value.from(this, "id") });
 								child.connect();
@@ -184,6 +185,7 @@ if (browserSupports.customElements) {
 			});
 
 			let oneEl = app.querySelector('o-ne');
+			console.log('oneEl', oneEl);
 
 			app.increment();
 
