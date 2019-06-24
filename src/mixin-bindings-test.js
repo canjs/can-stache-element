@@ -5,14 +5,15 @@ const value = require("can-value");
 const browserSupports = require("../test/browser-supports");
 const canReflect = require("can-reflect");
 
-
-QUnit.module("can-stache-define-element - mixin-bindings");
+let fixture;
+QUnit.module("can-stache-define-element - mixin-bindings", {
+	beforeEach() {
+		fixture = document.querySelector("#qunit-fixture");
+	}
+});
 
 if (browserSupports.customElements) {
 	QUnit.test("basics work", function(assert) {
-
-		const fixture = document.querySelector("#qunit-fixture");
-
 		class BasicBindingsElement extends StacheDefineElement {
 			static get view() {
 				return `<h1>{{message}}</h1>`;
@@ -24,9 +25,6 @@ if (browserSupports.customElements) {
 				};
 			}
 		}
-
-
-
 		customElements.define("basic-bindings", BasicBindingsElement);
 
 		var basicBindingsElement = new BasicBindingsElement();
@@ -37,11 +35,9 @@ if (browserSupports.customElements) {
 			message: messageObservable
 		});
 
-
 		assert.equal(basicBindingsElement.message, "Hi", "properties initialized later");
 		//-> The binding should really only happen once inserted ...
 		// -> Folks could call `var el = new Element().bindings({}).initialize()`
-
 
 		// INSERT ELEMENT
 		fixture.appendChild(basicBindingsElement);
@@ -146,7 +142,6 @@ if (browserSupports.customElements) {
 					elementPromise: {
 						get() {
 							return new Promise((resolve) => {
-								console.log('agg', this.id)
 								let child = this.id === 1 ? new One() : new Two();
 								child.bindings({ id: value.from(this, "id") });
 								child.connect();
@@ -167,7 +162,6 @@ if (browserSupports.customElements) {
 				this.id++;
 			}
 		}
-
 		customElements.define("a-pp", App);
 
 		let app = new App();
@@ -185,12 +179,10 @@ if (browserSupports.customElements) {
 			});
 
 			let oneEl = app.querySelector('o-ne');
-			console.log('oneEl', oneEl);
 
 			app.increment();
 
 			assert.equal(oneEl.querySelector('#oneid').textContent, "1", "Has not changed");
 		});
-
 	});
 }

@@ -3,7 +3,7 @@
 const stache = require("can-stache");
 const nodeLists = require("can-view-nodelist");
 const childNodes = require("can-child-nodes");
-	const domMutateNode = require("can-dom-mutate/node");
+const domMutateNode = require("can-dom-mutate/node");
 
 // make sure bindings work
 require("can-stache-bindings");
@@ -45,15 +45,7 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 				this.constructor[rendererSymbol] = renderer;
 			}
 
-			const teardown = () => {
-				console.log('teardown?')
-				//debugger;
-				//this.disconnect();
-			};
-			console.log("HAS PARENT", parentNodeList);
-
-			const nodeList = ensureMeta(this)._nodeList = nodeLists.register([],
-				teardown, parentNodeList || true, false);
+			const nodeList = ensureMeta(this)._nodeList = nodeLists.register([], function(){}, parentNodeList || true, false);
 			nodeList.expression = "<" + this.localName + ">";
 			const frag = renderer(this, renderOptions, nodeList);
 
@@ -75,7 +67,6 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 
 		[viewInsertSymbol](viewData) {
 			let nodeList = ensureMeta(this)._nodeList;
-			console.log('viewInsert');
 			viewData.nodeList.newDeepChildren.push(nodeList);
 			return this;
 		}
