@@ -77,6 +77,7 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 			let nodeList = ensureMeta(this)._nodeList;
 			console.log('viewInsert');
 			viewData.nodeList.newDeepChildren.push(nodeList);
+			return this;
 		}
 	};
 };
