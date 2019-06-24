@@ -12,7 +12,7 @@ const logs = [];
 
 class MyElement extends StacheDefineElement {
 	static view = `
-		<p>{{name}} has been running for {{time}} seconds</p>
+		<p>{{this.name}} has been running for {{this.time}} seconds</p>
 	`;
 
 	static define = {

@@ -10,7 +10,7 @@ import { StacheDefineElement } from "can";
 
 class MyElement extends StacheDefineElement {
 	static view = `
-		<p>{{age}}</p>
+		<p>{{this.age}}</p>
 	`;
 	static define = {
 		age: { type: Number, default: 30 }

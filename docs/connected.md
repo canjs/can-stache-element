@@ -6,11 +6,11 @@
 @signature `connected()`
 
 ```js
-import { StacheDefineElement } from "can";
+import { StacheDefineElement } from "can/everything";
 
-class MyElement extends StacheDefineElement {
+class Timer extends StacheDefineElement {
 	static view = `
-		<p>{{time}}</p>
+		<p>{{this.time}}</p>
 	`;
 	static define = {
 		time: { type: Number, default: 0 }
@@ -25,15 +25,15 @@ class MyElement extends StacheDefineElement {
 		};
 	}
 }
-customElements.define("my-el", MyElement);
+customElements.define("time-er", Timer);
 
-const myEl = new MyElement();
-document.body.appendChild(myEl);
+const timer = new Timer();
+document.body.appendChild(timer);
 
-myEl.firstElementChild; // -> <p>0</p>
+timer.firstElementChild; // -> <p>0</p>
 
 // ...some time passes
-myEl.firstElementChild; // -> <p>42</p>
+timer.firstElementChild; // -> <p>42</p>
 ```
 
   @return {Function|undefined} A teardown function to be called during [can-stache-define-element/lifecycle-methods.disconnect disconnect]. This function can be used to tear down anything that was set up during `connected`, using any local variables in its closure.
