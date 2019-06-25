@@ -87,6 +87,8 @@ This custom element can be used by putting a `<count-er></count-er>` tag in an H
 
 ### Defining an element's view
 
+StacheDefineElement uses [can-stache] to render live-bound HTML as the element's innerHTML.
+
 To create a [can-stache] view for the element, add a [can-stache-define-element/static.view static view] property to the class:
 
 ```html
@@ -105,9 +107,13 @@ customElements.define("count-er", Counter);
 @codepen
 @highlight 5-8
 
+The element's HTML will automatically update when any of the element's properties used by the `view` change.
+
 ### Defining an element's properties
 
-Properties can be defined using a [can-stache-define-element/static.define static define] object:
+To manage the logic and state of an element, [can-define-object DefineObject]-like property definitions can be added to explicitly configure how properties are defined.
+
+To add property definitions, add a [can-stache-define-element/static.define static define] object to the class:
 
 ```html
 <count-er></count-er>
@@ -201,7 +207,24 @@ document.body.querySelector("button#remove").addEventListener("click", () => {
 
 ## Testing
 
-There are lifecycle methods available to simulate parts of an element's lifecycle that would normally be triggered through the [custom element lifecycle](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks).
+Custom elements have [lifecycle methods](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks) that are automatically called by the browser.
+
+- `connectedCallback` is called when the element is added to the page
+- `disconnectedCallback` is called when the element is removed from the page
+
+StacheDefineElement uses the custom element lifecycle methods to initiate its own lifecycle.
+
+The `connectedCallback` will call:
+
+1. [can-stache-define-element/lifecycle-methods.initialize] - to set up the element's properties
+2. [can-stache-define-element/lifecycle-methods.render] - to create the innerHTML of the element
+3. [can-stache-define-element/lifecycle-methods.connect] - to connect the element to the DOM
+
+The `disconnectedCallback` will call:
+
+1. [can-stache-define-element/lifecycle-methods.disconnect] - to clean up event handlers and call teardown functions
+
+StacheDefineElement's lifecycle methods can be used to test each part of the lifecycle. The following sections explain how to do this.
 
 ### Testing an element's properties and methods
 
