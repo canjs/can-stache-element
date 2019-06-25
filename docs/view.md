@@ -5,39 +5,49 @@
 
 @signature `static view = " ... ";`
 
-The view can be defined using a `static` class field like shown below.
+  The view can be defined using a `static` class field like shown below.
 
-```js
-class TodoItem extends StacheDefineElement {
-	static view = `
-		<p>{{this.name}}</p>
-		<input type="checkbox" checked:bind="this.complete">
-	`;
-}
-customElements.define("todo-item", TodoItem);
-
-const todo = new TodoItem();
-
-// `render` must be called for view to be rendered into element
-todo.render({ name: "go grocery shopping" });
-
-todo.innerHTML // -> <p>go grocery shopping</p>
-               //    <input type="checkbox" checked:bind="complete">
-```
+  ```html
+  <count-er></count-er>
+  <script type="module">
+  import { StacheDefineElement } from "can/everything";
+  class Counter extends StacheDefineElement {
+  	static view = `
+  		<p>Count: <span>1</span></p>
+  	`;
+  }
+  customElements.define("count-er", Counter);
+  </script>
+  ```
+  @codepen
 
 > Note: to see all the options supported by `view`, see [can-stache].
 
 @signature `static get view() { return " ... "; }`
 
-For browsers that do not support class fields (and applications not using a transpiler), properties can be defined using a `static` getter like shown below.
+  For browsers that do not support class fields (and applications not using a transpiler), properties can be defined using a `static` getter like shown below.
 
-```js
-class TodoItem extends StacheDefineElement {
-	static get view() {
-		return `
-			<p>{{name}}</p>
-			<input type="checkbox" checked:bind="complete">
-		`;
-	}
-}
-```
+  ```js
+  import { StacheDefineElement } from "can/everything";
+  class Counter extends StacheDefineElement {
+  	static get view() {
+  		return `
+			<p>Count: <span>1</span></p>
+  		`;
+  	}
+  }
+  ```
+
+@signature `static get view = function() {};`
+
+  A function can be passed as the view property. This is useful for loading views in their own files and loading them with [steal-stache] or similar.
+
+  ```js
+  import { StacheDefineElement, stache } from "can/everything";
+
+  const renderer = stache(`<p>Count: <span>1</span></p>`);
+
+  class Counter extends StacheDefineElement {
+	  static view = renderer;
+  }
+  ```
