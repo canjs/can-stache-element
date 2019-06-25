@@ -45,7 +45,12 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 				this.constructor[rendererSymbol] = renderer;
 			}
 
-			const nodeList = ensureMeta(this)._nodeList = nodeLists.register([], function(){}, parentNodeList || true, false);
+			const meta = ensureMeta(this);
+			const nodeList = meta._nodeList = nodeLists.register([], () => {
+				meta.skipNodeListUnregister = true;
+				this.disconnect();
+				meta.skipNodeListUnregister = false;
+			}, parentNodeList || true, false);
 			nodeList.expression = "<" + this.localName + ">";
 			const frag = renderer(this, renderOptions, nodeList);
 
@@ -55,7 +60,7 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 		}
 		disconnect(){
 			const meta = this[metaSymbol];
-			if(meta._nodeList) {
+			if(meta._nodeList && !meta.skipNodeListUnregister) {
 				nodeLists.unregister(meta._nodeList);
 				meta._nodeList = null;
 			}

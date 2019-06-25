@@ -104,4 +104,57 @@ if (browserSupports.customElements) {
 		el.initialize({ prop: "value" });
 		assert.equal(el.prop, "value", "initialized with values provided to initialize");
 	});
+
+	QUnit.test("programatically instantiated elements get disconnected when removed", function(assert) {
+		let done = assert.async();
+
+		class Person extends StacheDefineElement {
+			static get view() {
+				return `
+					<p>person</p>
+				`;
+			}
+			disconnected() {
+				assert.ok(true, "connected");
+				done();
+			}
+		}
+		customElements.define("per-son", Person);
+
+		class App extends StacheDefineElement {
+			static get view() {
+				return `
+					<p>
+						{{#if(person)}}
+							{{{person}}}
+						{{/if}}
+					</p>
+				`;
+			}
+			static get define() {
+				return {
+					showPerson: true,
+					person: {
+						get() {
+							if (this.showPerson) {
+								let person = new Person();
+								person.connect();
+								return person;
+							}
+						}
+					}
+				};
+			}
+		}
+		customElements.define("person-app", App);
+
+		let app = new App();
+		app.connect();
+
+		const nameDiv = app.querySelector("per-son p");
+
+		assert.equal(nameDiv.innerHTML, "person");
+
+		app.showPerson = false;
+	});
 }
