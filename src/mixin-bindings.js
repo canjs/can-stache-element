@@ -67,7 +67,8 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 									source: "viewModel",
 									exports: canSetParentValue,
 									name: propName
-								}
+								},
+								bindingAttributeName: propName
 							}
 						});
 

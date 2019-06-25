@@ -185,4 +185,44 @@ if (browserSupports.customElements) {
 			assert.equal(oneEl.querySelector('#oneid').textContent, "1", "Has not changed");
 		});
 	});
+
+	QUnit.test("All bindings are torn down", function(assert) {
+		class BindingsTeardownElement extends StacheDefineElement {
+			static get view() {
+				return `<h1>{{greeting}} {{object}}</h1>`;
+			}
+			static get define() {
+				return {
+					greeting: { type: String, default: "Hi" },
+					object: { type: String, default: "person" }
+				};
+			}
+		}
+		customElements.define("bindings-teardown-element", BindingsTeardownElement);
+
+		var teardownElement = new BindingsTeardownElement();
+
+		var greetingObservable = value.with("Hello");
+		var objectObservable = value.with("world");
+
+		teardownElement.bindings({
+			greeting: greetingObservable,
+			object: objectObservable
+		});
+		teardownElement.connect();
+
+		const h1 = teardownElement.firstElementChild;
+		assert.equal(teardownElement.greeting, "Hello", "greetingObservable set up correctly");
+		assert.equal(teardownElement.object, "world", "objectObservable set up correctly");
+		assert.equal(h1.innerHTML, "Hello world", "view rendered");
+
+		teardownElement.disconnect();
+
+		greetingObservable.value = "Howdy";
+		objectObservable.value = "Mars";
+
+		assert.equal(teardownElement.greeting, "Hello", "greetingObservable torn down correctly");
+		assert.equal(teardownElement.object, "world", "objectObservable torn down correctly");
+		assert.equal(h1.innerHTML, "Hello world", "view not updated");
+	});
 }
