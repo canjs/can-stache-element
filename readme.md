@@ -11,7 +11,7 @@ Import/require **can-stache-define-element** and use the Element to derive your 
 
 ## Documentation
 
-Read the [can-stache-define-element API docs on CanJS.com](https://v3.canjs.com/doc/can-stache-define-element.html).
+Read the [can-stache-define-element API docs on CanJS.com](https://canjs.com/doc/can-stache-define-element.html).
 
 ## Changelog
 
