@@ -7,7 +7,7 @@
 @alias can.StacheDefineElement
 @outline 2
 
-@description Create a custom element with [can-define well-defined] properties and [can-stache stache views].
+@description Create a custom element with [can-define-object DefineObject]-like properties and [can-stache stache views].
 
 @signature `StacheDefineElement`
 
@@ -111,7 +111,7 @@ The element's HTML will automatically update when any of the element's propertie
 
 ### Defining an element's properties
 
-To manage the logic and state of an element, [can-define-object DefineObject]-like property definitions can be added to explicitly configure how properties are defined.
+To manage the logic and state of an element, [can-define-object DefineObject]-like property definitions can be added to explicitly configure how an element's properties are defined.
 
 To add property definitions, add a [can-stache-define-element/static.define static define] object to the class:
 
