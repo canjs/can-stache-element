@@ -41,10 +41,12 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			this.initialize(props);
 			this.render();
 			this.connect();
+			return this;
 		}
 
 		disconnectedCallback() {
 			this.disconnect();
+			return this;
 		}
 
 		// custom lifecycle methods
@@ -52,7 +54,7 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.initialized) {
-				return;
+				return this;
 			}
 
 			// Overwrite ... this means that this initialize
@@ -66,13 +68,15 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			this[inSetupSymbol] = false;
 
 			lifecycleStatus.initialized = true;
+
+			return this;
 		}
 
 		render(props) {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.rendered) {
-				return;
+				return this;
 			}
 
 			if (!lifecycleStatus.initialized) {
@@ -84,13 +88,15 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			}
 
 			lifecycleStatus.rendered = true;
+
+			return this;
 		}
 
 		connect(props) {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.connected) {
-				return;
+				return this;
 			}
 
 			if (!lifecycleStatus.initialized) {
@@ -113,13 +119,15 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			}
 
 			lifecycleStatus.connected = true;
+
+			return this;
 		}
 
 		disconnect() {
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.disconnected) {
-				return;
+				return this;
 			}
 
 			if (super.disconnect) {
@@ -139,6 +147,8 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			}
 
 			lifecycleStatus.disconnected = true;
+
+			return this;
 		}
 	};
 };

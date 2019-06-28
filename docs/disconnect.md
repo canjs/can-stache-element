@@ -5,62 +5,67 @@
 
 @signature `disconnect()`
 
-```js
-import { StacheDefineElement } from "can";
+  Calling `disconnect` will clean up an element's event handlers and call its [can-stache-define-element/lifecycle-hooks.disconnected disconnected hook]. Normally this is called by the [can-stache-define-element/lifecycle-methods.disconnectedCallback], but can be called manually for testing:
 
-const logs = [];
+  ```js
+  import { StacheDefineElement } from "can/everything";
 
-class MyElement extends StacheDefineElement {
-	static view = `
-		<p>{{name}} has been running for {{time}} seconds</p>
-	`;
+  const logs = [];
 
-	static define = {
-		name: { type: String, default: "App" },
-		time: { type: Number, default: 0 }
-	};
+  class MyElement extends StacheDefineElement {
+	  static view = `
+		  <p>{{this.name}} has been running for {{this.time}} seconds</p>
+	  `;
 
-	connected() {
-		this.listenTo("name", (ev, newName) => {
-			logs.push(`name change to ${newName}`);
-		});
+	  static define = {
+		  name: { type: String, default: "App" },
+		  time: { type: Number, default: 0 }
+	  };
 
-		let intervalId = setInterval(() => {
-			this.time++;
-		}, 1000);
+	  connected() {
+		  this.listenTo("name", (ev, newName) => {
+			  logs.push(`name change to ${newName}`);
+		  });
 
-		return () => {
-			clearInterval(intervalId);
-		};
-	}
+		  let intervalId = setInterval(() => {
+			  this.time++;
+		  }, 1000);
 
-	disconnected() {
-		logs.push("disconnected");
-	}
-}
-customElements.define("my-el", MyElement);
+		  return () => {
+			  clearInterval(intervalId);
+		  };
+	  }
 
-const myEl = new MyElement();
-myEl.connect();
+	  disconnected() {
+		  logs.push("disconnected");
+	  }
+  }
+  customElements.define("my-el", MyElement);
 
-myEl.innerHTML; // -> <p>App has been running for 0 seconds</p>
+  const myEl = new MyElement()
+	  .connect();
 
-myEl.name = "Counter";
-logs; // -> [ "name changed to Counter" ]
-myEl.innerHTML; // -> <p>Counter has been running for 0 seconds</p>
+  myEl.innerHTML; // -> <p>App has been running for 0 seconds</p>
 
-// ...some time passes
-myEl.innerHTML; // -> <p>Counter has been running for 3 seconds</p>
+  myEl.name = "Counter";
+  logs; // -> [ "name changed to Counter" ]
+  myEl.innerHTML; // -> <p>Counter has been running for 0 seconds</p>
 
-myEl.disconnect();
-myEl.innerHTML; // -> <p>Counter has been running for 3 seconds</p>
+  // ...some time passes
+  myEl.innerHTML; // -> <p>Counter has been running for 3 seconds</p>
 
-myEl.name = "Stopped Counter";
-logs; // -> [ "name changed to Counter", "disconnected" ]
+  myEl.disconnect();
+  myEl.innerHTML; // -> <p>Counter has been running for 3 seconds</p>
 
-// ...some time passes
-myEl.innerHTML; // -> <p>Stopped Counter has been running for 3 seconds</p>
-```
+  myEl.name = "Stopped Counter";
+  logs; // -> [ "name changed to Counter", "disconnected" ]
+
+  // ...some time passes
+  myEl.innerHTML; // -> <p>Stopped Counter has been running for 3 seconds</p>
+  ```
+  @codepen
+
+	@return {Element} The `element` instance.
 
 @body
 

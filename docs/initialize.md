@@ -5,26 +5,31 @@
 
 @signature `initialize(props)`
 
-```js
-import { StacheDefineElement } from "can";
+  Calling `initialize` will set up property definitions and set initial property values. Normally this is called by the [can-stache-define-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
-class MyElement extends StacheDefineElement {
-	static view = `
-		<p>{{age}}</p>
-	`;
-	static define = {
-		age: { type: Number, default: 30 }
-	};
-}
-customElements.define("my-el", MyElement);
+  ```js
+  import { StacheDefineElement } from "can/everything";
 
-const myEl = new MyElement();
-myEl.initialize({ age: 32 });
+  class MyElement extends StacheDefineElement {
+	  static view = `
+		  <p>{{this.age}}</p>
+	  `;
+	  static define = {
+		  age: { type: Number, default: 30 }
+	  };
+  }
+  customElements.define("my-el", MyElement);
 
-myEl.age // -> 32
-```
+  const myEl = new MyElement()
+	  .initialize({ age: 32 });
+
+  myEl.age; // -> 32
+  ```
+  @codepen
 
 	@param {Object} props The initial property values.
+
+	@return {Element} The `element` instance.
 
 @body
 

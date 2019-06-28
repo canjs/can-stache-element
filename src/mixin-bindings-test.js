@@ -225,4 +225,18 @@ if (browserSupports.customElements) {
 		assert.equal(teardownElement.object, "world", "objectObservable torn down correctly");
 		assert.equal(h1.innerHTML, "Hello world", "view not updated");
 	});
+
+	QUnit.test("Lifecycle methods return the element", function(assert) {
+		class BindingsMethodsElement extends StacheDefineElement {}
+		customElements.define("bindings-methods-element", BindingsMethodsElement);
+
+		let obj = new BindingsMethodsElement()
+			.bindings()
+			.initialize()
+			.render()
+			.connect()
+			.disconnect();
+
+		assert.ok(obj instanceof BindingsMethodsElement, "initialize, render, connect, disconnect");
+	});
 }
