@@ -1,6 +1,8 @@
 const QUnit = require("steal-qunit");
 const Scope = require("can-view-scope");
 const viewCallbacks = require("can-view-callbacks");
+const stache = require("can-stache");
+const SimpleObservable = require("can-simple-observable");
 const StacheDefineElement = require("./can-stache-define-element");
 const browserSupports = require("../test/browser-supports");
 
@@ -156,5 +158,47 @@ if (browserSupports.customElements) {
 		assert.equal(nameDiv.innerHTML, "person");
 
 		app.showPerson = false;
+	});
+
+	QUnit.test("element can be used directly in a stache view", function(assert) {
+		const fixture = document.querySelector("#qunit-fixture");
+
+		assert.expect(2);
+		const done = assert.async();
+
+		const show = new SimpleObservable(false);
+
+		class El extends StacheDefineElement {
+			connected() {
+				assert.ok(true, "connected");
+			}
+			disconnected() {
+				assert.ok(true, "disconnected");
+				done();
+			}
+		}
+		customElements.define("stache-el-in-stache", El);
+
+		const el = new El();
+
+		const frag = stache(`
+			<div>
+			{{#if(show)}}
+				{{el}}
+			{{/if}}
+			</div>
+		`)({
+			el,
+			show
+		});
+
+		// viewInsert
+		show.value = true;
+
+		// connect
+		fixture.appendChild(frag);
+
+		// teardown
+		show.value = false;
 	});
 }
