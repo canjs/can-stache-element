@@ -1,7 +1,7 @@
 @function can-stache-define-element/lifecycle-methods.disconnectedCallback disconnectedCallback
 @parent can-stache-define-element/lifecycle-methods 4
 
-@description A lifecycle hook called after the component's element is removed from the document.
+@description A lifecycle hook called after the element is removed from the document.
 
 @signature `disconnectedCallback()`
 

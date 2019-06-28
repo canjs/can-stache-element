@@ -20,9 +20,9 @@
   }
   customElements.define("todo-item", TodoItem);
 
-  const todo = new TodoItem();
-  // `initialize` must be called for properties to be defined correctly
-  todo.initialize({ name: "go grocery shopping" });
+  const todo = new TodoItem()
+	  // `initialize` must be called for properties to be set up
+	  .initialize({ name: "go grocery shopping" });
 
   todo.name; // -> "go grocery shopping"
   todo.completed; // -> false

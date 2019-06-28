@@ -43,13 +43,13 @@
   ```
   @codepen
 
-  To create a component instance, either:
+  To create an element instance, either:
 
   - Write the element tag and [can-stache-bindings bindings] in a [can-stache] template like:
     ```html
     <count-er count:from="5"/>
     ```
-  - Write the component tag in an HTML page:
+  - Write the element tag in an HTML page:
     ```html
     <count-er></count-er>
     ```
@@ -246,8 +246,8 @@ class Counter extends StacheDefineElement {
 	}
 }
 customElements.define("count-er", Counter);
-const counter = new Counter();
-counter.initialize({ count: 20 });
+const counter = new Counter()
+	.initialize({ count: 20 });
 
 counter.count === 20; // -> true
 
@@ -276,8 +276,8 @@ class Counter extends StacheDefineElement {
 	}
 }
 customElements.define("count-er", Counter);
-const counter = new Counter();
-counter.render({ count: 20 });
+const counter = new Counter()
+	.render({ count: 20 });
 
 counter.firstElementChild.innerHTML === "20"; // -> true
 
@@ -313,8 +313,8 @@ class Timer extends StacheDefineElement {
 }
 customElements.define("time-er", Timer);
 
-const timer = new Timer();
-timer.connect();
+const timer = new Timer()
+	.connect();
 
 timer.firstElementChild; // -> <p>0</p>
 

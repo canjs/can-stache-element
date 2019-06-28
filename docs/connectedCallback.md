@@ -1,7 +1,7 @@
 @function can-stache-define-element/lifecycle-methods.connectedCallback connectedCallback
 @parent can-stache-define-element/lifecycle-methods 0
 
-@description A lifecycle hook called after the component's element is inserted into the document.
+@description A lifecycle hook called after the element is inserted into the document.
 
 @signature `connectedCallback(props)`
 
@@ -10,7 +10,7 @@
   The `connectedCallback` can also be called manually to trigger these things. For example, the following defines a `greeting` property, uses it in the `view`, and also programmatically adds a `<p>` element in the `connected` hook:
 
   ```js
-  import { StacheDefineElement } from "can";
+  import { StacheDefineElement } from "can/everything";
 
   class MyElement extends StacheDefineElement {
 	static view = `
@@ -27,8 +27,8 @@
   }
   customElements.define("my-el", MyElement);
 
-  const myEl = new MyElement();
-  myEl.connectedCallback();
+  const myEl = new MyElement()
+	  .connectedCallback();
 
   myEl.greeting;          // -> Hello
   myEl.firstElementChild; // -> <p>Hello</p>

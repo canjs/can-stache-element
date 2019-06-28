@@ -92,15 +92,15 @@ if (browserSupports.customElements) {
 	});
 
 	QUnit.test("Can initialize with el.initialize()", function(assert) {
-		class Component extends StacheDefineElement {
+		class El extends StacheDefineElement {
 			static get define() {
 				return {
 					prop: "default"
 				};
 			}
 		}
-		customElements.define("stache-component-initialized", Component);
-		const el = new Component();
+		customElements.define("stache-element-initialized", El);
+		const el = new El();
 		el.initialize({ prop: "value" });
 		assert.equal(el.prop, "value", "initialized with values provided to initialize");
 	});
