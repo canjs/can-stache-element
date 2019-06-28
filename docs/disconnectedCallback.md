@@ -1,19 +1,41 @@
 @function can-stache-define-element/lifecycle-methods.disconnectedCallback disconnectedCallback
 @parent can-stache-define-element/lifecycle-methods 4
 
-@description Implementation of the `disconnectedCallback` lifecycle method of custom elements.
+@description A lifecycle hook called after the component's element is removed from the document.
 
-@signature `disconnectedCallback(props)`
+@signature `disconnectedCallback()`
 
-```js
-import { StacheDefineElement } from "can";
+  The browser calls a custom element's `disconnectedCallback` when the element is removed from the page. StacheDefineElement uses this to clean up event handlers and call the `disconnected` lifecycle hook.
 
-class MyElement extends StacheDefineElement {}
-customElements.define("my-el", MyElement);
+  The `disconnectedCallback` can also be called manually to trigger these things:
 
-const myEl = new MyElement();
-myEl.disconnectedCallback();
-```
+  ```js
+  import { StacheDefineElement } from "can/everything";
+
+  class MyElement extends StacheDefineElement {
+	  connected() {
+		  this.listenTo("greeting", (greeting) => {
+			  console.log(`greeting changed to ${greeting}`);
+		  });
+	  }
+  }
+  customElements.define("my-el", MyElement);
+
+  const myEl = new MyElement()
+	  .connectedCallback();
+
+  myEl.greeting = "Hello"; // -> "greeting changed to Hello"
+
+  myEl.disconnectedCallback(); // -> "cleaned up"
+
+  myEl.greeting = "Hi"; // nothing logged
+  myEl.greeting = "Hello";
+
+  myEl.disconnectedCallback();
+  ```
+  @codepen
+
+	@return {Element} The `element` instance.
 
 @body
 
@@ -22,3 +44,7 @@ myEl.disconnectedCallback();
 `StacheDefineElement` implements the custom element `disconnectedCallback` hook to:
 
 - [can-stache-define-element/lifecycle-methods.disconnect] the element from the DOM.
+
+The `disconnect` method handles cleaning up any event handlers created for the element (including calling [can-event-queue/map/map.stopListening stopListening]) and then calls the [can-stache-define-element/lifecycle-hooks.disconnected disconnected hook].
+
+**When creating an extended `StacheDefineElement`, the `disconnectedCallback` should not be overwritten.** Code that needs to run when an element is removed from the page should be put in [can-stache-define-element/lifecycle-hooks.disconnected].
