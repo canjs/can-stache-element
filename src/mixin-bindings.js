@@ -20,6 +20,7 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 				this[metaSymbol] = {};
 			}
 			this[metaSymbol]._connectedBindings = bindings;
+			return this;
 		}
 		initialize(props) {
 			var savedBindings = this[metaSymbol] && this[metaSymbol]._connectedBindings;
