@@ -254,3 +254,33 @@ QUnit.test("disconnect calls `disconnected` hook", function(assert) {
 	const obj = new Obj();
 	obj.disconnect();
 });
+
+QUnit.test("lifecycle methods return the obj", function(assert) {
+	class Obj extends mixinLifecycleMethods(Object) { }
+
+	let obj = new Obj()
+		.connectedCallback()
+		.disconnectedCallback();
+
+	assert.ok(obj instanceof Obj, "connectedCallback and disconnectedCallback");
+
+	obj = new Obj()
+		.initialize()
+		.render()
+		.connect()
+		.disconnect();
+
+	assert.ok(obj instanceof Obj, "initialize, render, connect, disconnect");
+
+	obj = new Obj()
+		.initialize()
+		.initialize()
+		.render()
+		.render()
+		.connect()
+		.connect()
+		.disconnect()
+		.disconnect();
+
+	assert.ok(obj instanceof Obj, "initialize, render, connect, disconnect called twice");
+});
