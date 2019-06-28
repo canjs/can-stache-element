@@ -5,33 +5,38 @@
 
 @signature `connect(props)`
 
-```js
-import { StacheDefineElement } from "can";
+  Calling `connect` will [can-stache-define-element/lifecycle-methods.initialize] and [can-stache-define-element/lifecycle-methods.render] an element and call its [can-stache-define-element/lifecycle-hooks.connected] hook. Normally this is called by the [can-stache-define-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
-class MyElement extends StacheDefineElement {
-	static view = `
-		<p>{{this.greeting}}</p>
-	`;
-	static define = {
-		age: { type: String, default: "Hello" }
-	};
-	connected() {
-		const p = document.createElement("p");
-		p.innerHTML = "World";
-		this.appendChild(p);
-	}
-}
-customElements.define("my-el", MyElement);
+  ```js
+  import { StacheDefineElement } from "can/everything";
 
-const myEl = new MyElement();
-myEl.connect({ greeting: "Hi" });
+  class MyElement extends StacheDefineElement {
+	  static view = `
+		  <p>{{this.age}}</p>
+	  `;
+	  static define = {
+		  age: { type: Number, default: 30 }
+	  };
+	  connected() {
+		  const p = document.createElement("p");
+		  p.innerHTML = "World";
+		  this.appendChild(p);
+	  }
+  }
+  customElements.define("my-el", MyElement);
 
-myEl.greeting  // -> Hi
-myEl.innerHTML // -> <p>Hi</p>
-               //    <p>World</p>
-```
+  const myEl = new MyElement()
+	  .connect({ greeting: "Hi" });
+
+  myEl.greeting  // -> Hi
+  myEl.innerHTML // -> <p>Hi</p>
+                 //    <p>World</p>
+  ```
+  @codepen
 
 	@param {Object} props The initial property values.
+
+	@return {Element} The `element` instance.
 
 @body
 
