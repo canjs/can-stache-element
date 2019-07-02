@@ -47,6 +47,10 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 
 			const meta = ensureMeta(this);
 			const nodeList = meta._nodeList = nodeLists.register([], () => {
+				// if disconnect called unregister, don't call disconnect again
+				if (meta.skipDisconnect) {
+					return;
+				}
 				meta.skipNodeListUnregister = true;
 				this.disconnect();
 				meta.skipNodeListUnregister = false;
@@ -57,11 +61,21 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 			const viewRoot = this.viewRoot || this;
 			domMutateNode.appendChild.call(viewRoot, frag);
 			nodeLists.update(nodeList, childNodes(viewRoot));
+
+			// if element has already been inserted into the view,
+			// add its nodelist to the parent nodelist after rendering
+			if (meta._viewDataNodeList) {
+				meta._viewDataNodeList.newDeepChildren.push(nodeList);
+			}
 		}
 		disconnect(){
 			const meta = this[metaSymbol];
+			// if unregister called disconnect, don't call unregister again
 			if(meta._nodeList && !meta.skipNodeListUnregister) {
+				meta.skipDisconnect = true;
 				nodeLists.unregister(meta._nodeList);
+				meta.skipDisconnect = false;
+
 				meta._nodeList = null;
 			}
 
@@ -71,8 +85,18 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 		}
 
 		[viewInsertSymbol](viewData) {
-			let nodeList = ensureMeta(this)._nodeList;
-			viewData.nodeList.newDeepChildren.push(nodeList);
+			const meta = ensureMeta(this);
+			const nodeList = meta._nodeList;
+
+			// if element has already been rendered, add its nodeList
+			// to the new parentNodeList.
+			// Otherwise, store the parent nodelist so the element's
+			// nodelist can be added to it in render.
+			if (nodeList) {
+				viewData.nodeList.newDeepChildren.push(nodeList);
+			} else {
+				meta._viewDataNodeList = viewData.nodeList;
+			}
 			return this;
 		}
 	};
