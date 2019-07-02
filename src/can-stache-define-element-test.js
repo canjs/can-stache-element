@@ -201,4 +201,23 @@ if (browserSupports.customElements) {
 		// teardown
 		show.value = false;
 	});
+
+	QUnit.test("addEventListener and removeEventListener work for DOM events", function(assert) {
+		const done = assert.async();
+
+		class El extends StacheDefineElement {}
+		customElements.define("add-event-listener-el", El);
+
+		const el = new El();
+
+		el.addEventListener("an-event", function handler() {
+			el.removeEventListener("an-event", handler);
+			el.dispatchEvent( new Event("an-event") );
+
+			assert.ok(true, "addEventListener works");
+			done();
+		});
+
+		el.dispatchEvent( new Event("an-event") );
+	});
 }
