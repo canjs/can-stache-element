@@ -8,7 +8,7 @@ QUnit.test("basics", function(assert) {
 	class DefineElement extends mixinDefine(Object) {
 		static get define() {
 			return {
-				age: { Type: type.convert(Number), default: 32 }
+				age: { type: type.convert(Number), default: 32 }
 			};
 		}
 	}
