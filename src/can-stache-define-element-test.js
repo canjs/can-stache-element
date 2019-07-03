@@ -35,8 +35,8 @@ if (browserSupports.customElements) {
 
 			static get define() {
 				return {
-					first: { Type: String, default: "Kevin" },
-					last: { Type: String, default: "McCallister" }
+					first: { type: String, default: "Kevin" },
+					last: { type: String, default: "McCallister" }
 				};
 			}
 
