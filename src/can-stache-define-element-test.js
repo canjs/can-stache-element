@@ -220,4 +220,37 @@ if (browserSupports.customElements) {
 
 		el.dispatchEvent( new Event("an-event") );
 	});
+
+	QUnit.only("value() is only called once", function(assert) {
+		let valueCalls = 0, lastSetCalls = 0;
+		class ValueEl extends StacheDefineElement {
+			static get view() {
+				return `{{one}}`;
+			}
+
+			static get define() {
+				return {
+					one: {
+						value({ lastSet, listenTo, resolve }) {
+							valueCalls++;
+							listenTo(lastSet, (val) => {
+								lastSetCalls++;
+								resolve(val);
+							});
+							resolve(lastSet.get());
+						}
+					}
+				};
+			}
+		}
+
+		customElements.define("value-only-once", ValueEl);
+		let el = new ValueEl();
+		el.connect({ one: 1 });
+		el.one = 2;
+
+		assert.equal(el.firstChild.data, "2", "renders the value");
+		assert.equal(valueCalls, 1, "value() only called once");
+		assert.equal(lastSetCalls, 1, "lastSet changed");
+	});
 }
