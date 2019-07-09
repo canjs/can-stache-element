@@ -258,6 +258,19 @@ if (browserSupports.customElements) {
 		foo.first = "two";
 		assert.ok(updated, "onKeyValue called");
 		assert.equal(foo.second, "two", "updated");
+
+		// Verify it works when there are multiple instances
+		let foo2 = new Foo();
+		foo2.connect();
+		updated = false;
+		canReflect.onKeyValue(foo2, "second", () => {
+			updated = true;
+		});
+
+		assert.equal(foo2.second, "one", "initial value");
+		foo2.first = "two";
+		assert.ok(updated, "onKeyValue called");
+		assert.equal(foo2.second, "two", "updated");
 	});
 
 	dev.devOnlyTest("Warns when a property matches an event name", function(assert) {

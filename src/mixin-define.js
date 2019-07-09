@@ -25,12 +25,14 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 
 		// Warn on special properties
 		//!steal-remove-start
-		let defines = typeof Type.define === "object" ? Type.define : {};
-		canReflect.eachKey(defines, function(value, key) {
-			if("on" + key in Type.prototype) {
-				canLogDev.warn(`${canReflect.getName(Type)}: The defined property [${key}] matches the name of a DOM event. This property could update unexpectedly. Consider renaming.`);
-			}
-		});
+		if(process.env.NODE_ENV !== 'production') {
+			let defines = typeof Type.define === "object" ? Type.define : {};
+			canReflect.eachKey(defines, function(value, key) {
+				if("on" + key in Type.prototype) {
+					canLogDev.warn(`${canReflect.getName(Type)}: The defined property [${key}] matches the name of a DOM event. This property could update unexpectedly. Consider renaming.`);
+				}
+			});
+		}
 		//!steal-remove-end
 	}
 
