@@ -5,6 +5,8 @@ const stache = require("can-stache");
 const SimpleObservable = require("can-simple-observable");
 const StacheDefineElement = require("./can-stache-define-element");
 const browserSupports = require("../test/browser-supports");
+const canReflect = require("can-reflect");
+const dev = require("can-test-helpers").dev;
 
 QUnit.module("can-stache-define-element");
 
@@ -220,4 +222,68 @@ if (browserSupports.customElements) {
 
 		el.dispatchEvent( new Event("an-event") );
 	});
+
+	QUnit.test("value() updates", function(assert) {
+		class Foo extends StacheDefineElement {
+			static get view() {
+				return '<span>{{second}}</span>';
+			}
+
+			static get define() {
+				return {
+					first: "one",
+					second: {
+						value({ listenTo, resolve }) {
+							resolve(this.first);
+
+							listenTo("first", (ev, val) => {
+								resolve(val);
+							});
+						}
+					}
+				};
+			}
+		}
+
+		customElements.define('value-should-update', Foo);
+
+		let updated = false;
+		let foo = new Foo();
+		foo.connect();
+		canReflect.onKeyValue(foo, "second", () => {
+			updated = true;
+		});
+
+		assert.equal(foo.second, "one", "initial value");
+		foo.first = "two";
+		assert.ok(updated, "onKeyValue called");
+		assert.equal(foo.second, "two", "updated");
+
+		// Verify it works when there are multiple instances
+		let foo2 = new Foo();
+		foo2.connect();
+		updated = false;
+		canReflect.onKeyValue(foo2, "second", () => {
+			updated = true;
+		});
+
+		assert.equal(foo2.second, "one", "initial value");
+		foo2.first = "two";
+		assert.ok(updated, "onKeyValue called");
+		assert.equal(foo2.second, "two", "updated");
+	});
+
+	dev.devOnlyTest("Warns when a property matches an event name", function(assert) {
+		class ClickPropEl extends StacheDefineElement {
+			static get define() {
+				return { click: String };
+			}
+		}
+		customElements.define("click-prop-should-warn", ClickPropEl);
+
+		let undo = dev.willWarn(/click/);
+		new ClickPropEl();
+		assert.equal(undo(), 1, "Warned for the 'click' prop");
+	});
+
 }
