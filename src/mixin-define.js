@@ -27,7 +27,7 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 		//!steal-remove-start
 		if(process.env.NODE_ENV !== 'production') {
 			let defines = typeof Type.define === "object" ? Type.define : {};
-			canReflect.eachKey(defines, function(value, key) {
+			Object.keys(defines).forEach(function(key) {
 				if("on" + key in Type.prototype) {
 					canLogDev.warn(`${canReflect.getName(Type)}: The defined property [${key}] matches the name of a DOM event. This property could update unexpectedly. Consider renaming.`);
 				}
