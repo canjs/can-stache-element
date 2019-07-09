@@ -5,6 +5,7 @@ const stache = require("can-stache");
 const SimpleObservable = require("can-simple-observable");
 const StacheDefineElement = require("./can-stache-define-element");
 const browserSupports = require("../test/browser-supports");
+const canReflect = require("can-reflect");
 
 QUnit.module("can-stache-define-element");
 
@@ -220,4 +221,36 @@ if (browserSupports.customElements) {
 
 		el.dispatchEvent( new Event("an-event") );
 	});
+
+	QUnit.test("value() updates", function(assert) {
+		class Foo extends StacheDefineElement {
+			static get define() {
+				return {
+					first: "one",
+					second: {
+						value({ listenTo, resolve }) {
+							resolve(this.first);
+							listenTo("first", (ev, val) => {
+								resolve(val);
+							});
+						}
+					}
+				};
+			}
+		}
+
+		customElements.define('value-should-update', Foo);
+
+		let updated = false;
+		let foo = new Foo();
+		canReflect.onKeyValue(foo, "second", () => {
+			updated = true;
+		});
+
+		assert.equal(foo.second, "one", "initial value");
+		foo.first = "two";
+		assert.ok(updated, "onKeyValue called");
+		assert.equal(foo.second, "two", "updated");
+	});
+
 }
