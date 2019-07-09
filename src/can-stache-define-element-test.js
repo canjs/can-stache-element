@@ -6,6 +6,7 @@ const SimpleObservable = require("can-simple-observable");
 const StacheDefineElement = require("./can-stache-define-element");
 const browserSupports = require("../test/browser-supports");
 const canReflect = require("can-reflect");
+const dev = require("can-test-helpers").dev;
 
 QUnit.module("can-stache-define-element");
 
@@ -224,12 +225,17 @@ if (browserSupports.customElements) {
 
 	QUnit.test("value() updates", function(assert) {
 		class Foo extends StacheDefineElement {
+			static get view() {
+				return '<span>{{second}}</span>';
+			}
+
 			static get define() {
 				return {
 					first: "one",
 					second: {
 						value({ listenTo, resolve }) {
 							resolve(this.first);
+
 							listenTo("first", (ev, val) => {
 								resolve(val);
 							});
@@ -243,6 +249,7 @@ if (browserSupports.customElements) {
 
 		let updated = false;
 		let foo = new Foo();
+		foo.connect();
 		canReflect.onKeyValue(foo, "second", () => {
 			updated = true;
 		});
@@ -251,6 +258,19 @@ if (browserSupports.customElements) {
 		foo.first = "two";
 		assert.ok(updated, "onKeyValue called");
 		assert.equal(foo.second, "two", "updated");
+	});
+
+	dev.devOnlyTest("Warns when a property matches an event name", function(assert) {
+		class ClickPropEl extends StacheDefineElement {
+			static get define() {
+				return { click: String };
+			}
+		}
+		customElements.define("click-prop-should-warn", ClickPropEl);
+
+		let undo = dev.willWarn(/click/);
+		new ClickPropEl();
+		assert.equal(undo(), 1, "Warned for the 'click' prop");
 	});
 
 }
