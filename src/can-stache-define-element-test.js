@@ -276,7 +276,12 @@ if (browserSupports.customElements) {
 	dev.devOnlyTest("Warns when a property matches an event name", function(assert) {
 		class ClickPropEl extends StacheDefineElement {
 			static get define() {
-				return { click: String };
+				return {
+					click: String,
+					get other() {
+						throw new Error('Don\'t get me');
+					}
+				};
 			}
 		}
 		customElements.define("click-prop-should-warn", ClickPropEl);
