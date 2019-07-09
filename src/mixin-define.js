@@ -12,6 +12,9 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 	return class DefinedClass extends mixinElement(Base) {
 		constructor() {
 			super();
+
+			// These methods are created on the instance by finalizeClass
+			// so they have to be restored on each instance, instead of once on the prototype
 			restoreBaseMethods(this, Base, ["addEventListener", "removeEventListener"]);
 		}
 
