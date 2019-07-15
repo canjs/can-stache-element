@@ -5,6 +5,7 @@
 @group can-stache-define-element/lifecycle-methods 1 lifecycle methods
 @group can-stache-define-element/lifecycle-hooks 2 lifecycle hooks
 @alias can.StacheDefineElement
+@package ../package.json
 @outline 2
 
 @description Create a custom element with [can-define-object DefineObject]-like properties and [can-stache stache views].
