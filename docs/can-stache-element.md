@@ -8,7 +8,7 @@
 @package ../package.json
 @outline 2
 
-@description Create a custom element with [can-define-object ObservableObject]-like properties and [can-stache stache views].
+@description Create a custom element with [can-observable-object ObservableObject]-like properties and [can-stache stache views].
 
 @signature `StacheElement`
 
@@ -17,7 +17,7 @@
   Extend `StacheElement` with a:
 
   - `static view` - A [can-stache stache] view.
-  - `static props` - [can-define-object ObservableObject]-like property definitions.
+  - `static props` - [can-observable-object ObservableObject]-like property definitions.
   - getters, setters, and methods.
   - lifecycle hooks - [can-stache-element/lifecycle-hooks.connected] and [can-stache-element/lifecycle-hooks.disconnected].
 
@@ -112,7 +112,7 @@ The element's HTML will automatically update when any of the element's propertie
 
 ### Defining an element's properties
 
-To manage the logic and state of an element, [can-define-object ObservableObject]-like property definitions can be added to explicitly configure how an element's properties are defined.
+To manage the logic and state of an element, [can-observable-object ObservableObject]-like property definitions can be added to explicitly configure how an element's properties are defined.
 
 To add property definitions, add a [can-stache-element/static.props static props] object to the class:
 
