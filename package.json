@@ -1,7 +1,7 @@
 {
   "name": "can-stache-define-element",
   "description": "Create custom elements with can-stache, can-define-class, and JavaScript classes",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
