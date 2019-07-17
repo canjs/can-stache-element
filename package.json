@@ -1,7 +1,7 @@
 {
   "name": "can-stache-element",
   "description": "Create custom elements with can-stache, can-observable-object, and JavaScript classes",
-  "version": "0.7.5",
+  "version": "0.8.0",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
