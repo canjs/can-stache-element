@@ -1,6 +1,6 @@
 {
-  "name": "can-stache-define-element",
-  "description": "Create custom elements with can-stache, can-define-class, and JavaScript classes",
+  "name": "can-stache-element",
+  "description": "Create custom elements with can-stache, can-observable-object, and JavaScript classes",
   "version": "0.7.5",
   "author": {
     "name": "Bitovi",
@@ -9,14 +9,14 @@
   },
   "browserslist": "ie 11",
   "bugs": {
-    "url": "https://github.com/canjs/can-stache-define-element/issues"
+    "url": "https://github.com/canjs/can-stache-element/issues"
   },
   "dependencies": {
     "can-bind": "^1.4.3",
     "can-child-nodes": "^1.2.1",
     "can-define-lazy-value": "^1.1.0",
-    "can-define-mixin": "<2.0.0",
     "can-log": "^1.0.2",
+    "can-observable-mixin": "<2.0.0",
     "can-simple-observable": "^2.4.2",
     "can-stache": "^4.0.0",
     "can-stache-bindings": "^4.0.0",
@@ -42,15 +42,15 @@
     "test-saucelabs": "0.0.6",
     "testee": "^0.9.0"
   },
-  "homepage": "https://github.com/canjs/can-stache-define-element",
+  "homepage": "https://github.com/canjs/can-stache-element",
   "keywords": [
     "CanJS"
   ],
   "license": "MIT",
-  "main": "dist/can-stache-define-element.js",
+  "main": "dist/can-stache-element.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/canjs/can-stache-define-element.git"
+    "url": "git://github.com/canjs/can-stache-element.git"
   },
   "scripts": {
     "ci": "npm run test && node test/test-saucelabs.js && npm run compile-to-es5",
@@ -65,6 +65,6 @@
     "testee": "testee test/test.html --browsers firefox"
   },
   "steal": {
-    "main": "src/can-stache-define-element.js"
+    "main": "src/can-stache-element.js"
   }
 }

@@ -1,4 +1,4 @@
-const { mixinElement } = require("can-define-mixin");
+const { mixinElement } = require("can-observable-mixin");
 const canReflect = require("can-reflect");
 const canLogDev = require("can-log/dev/dev");
 const eventTargetInstalledSymbol = Symbol.for("can.eventTargetInstalled");
@@ -26,8 +26,13 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 		// Warn on special properties
 		//!steal-remove-start
 		if(process.env.NODE_ENV !== 'production') {
-			let defines = typeof Type.define === "object" ? Type.define : {};
-			Object.keys(defines).forEach(function(key) {
+			// look for `static props`and fall back to `static define` if `props` doesn't exist
+			let props = typeof Type.props === "object" ?
+				Type.props :
+				typeof Type.define === "object" ?
+					Type.define :
+					{};
+			Object.keys(props).forEach(function(key) {
 				if("on" + key in Type.prototype) {
 					canLogDev.warn(`${canReflect.getName(Type)}: The defined property [${key}] matches the name of a DOM event. This property could update unexpectedly. Consider renaming.`);
 				}

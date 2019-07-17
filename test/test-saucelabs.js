@@ -28,6 +28,6 @@ var platforms = [{
 var url = "http://localhost:3000/test/test.html?hidepassed";
 
 SauceLabs({
-	urls: [{ name: "can-stache-define-element", url : url }],
+	urls: [{ name: "can-stache-element", url : url }],
 	platforms: platforms
 });

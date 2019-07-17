@@ -1,12 +1,12 @@
 const QUnit = require("steal-qunit");
-const StacheDefineElement = require("./can-stache-define-element");
+const StacheElement = require("./can-stache-element");
 const value = require("can-value");
 
 const browserSupports = require("../test/browser-supports");
 const canReflect = require("can-reflect");
 
 let fixture;
-QUnit.module("can-stache-define-element - mixin-bindings", {
+QUnit.module("can-stache-element - mixin-bindings", {
 	beforeEach() {
 		fixture = document.querySelector("#qunit-fixture");
 	}
@@ -14,12 +14,12 @@ QUnit.module("can-stache-define-element - mixin-bindings", {
 
 if (browserSupports.customElements) {
 	QUnit.test("basics work", function(assert) {
-		class BasicBindingsElement extends StacheDefineElement {
+		class BasicBindingsElement extends StacheElement {
 			static get view() {
 				return `<h1>{{message}}</h1>`;
 			}
 
-			static get define() {
+			static get props() {
 				return {
 					message: { type: String, default: "Hi" }
 				};
@@ -82,7 +82,7 @@ if (browserSupports.customElements) {
 		let done = assert.async();
 		let oneId = 0, twoId = 0;
 
-		class One extends StacheDefineElement {
+		class One extends StacheElement {
 			static get view() {
 				return `
 					{{this.setId(id)}}
@@ -90,7 +90,7 @@ if (browserSupports.customElements) {
 				`;
 			}
 
-			static get define() {
+			static get props() {
 				return {
 					id: Number
 				};
@@ -102,7 +102,7 @@ if (browserSupports.customElements) {
 		}
 		customElements.define("o-ne", One);
 
-		class Two extends StacheDefineElement {
+		class Two extends StacheElement {
 			static get view() {
 				return `
 					{{this.setId(id)}}
@@ -110,7 +110,7 @@ if (browserSupports.customElements) {
 				`;
 			}
 
-			static get define() {
+			static get props() {
 				return {
 					id: Number
 				};
@@ -122,7 +122,7 @@ if (browserSupports.customElements) {
 		}
 		customElements.define("t-wo", Two);
 
-		class App extends StacheDefineElement {
+		class App extends StacheElement {
 			static get view() {
 				return `
 					<p>
@@ -135,7 +135,7 @@ if (browserSupports.customElements) {
 				`;
 			}
 
-			static get define() {
+			static get props() {
 				return {
 					id: 1,
 
@@ -187,11 +187,11 @@ if (browserSupports.customElements) {
 	});
 
 	QUnit.test("All bindings are torn down", function(assert) {
-		class BindingsTeardownElement extends StacheDefineElement {
+		class BindingsTeardownElement extends StacheElement {
 			static get view() {
 				return `<h1>{{greeting}} {{object}}</h1>`;
 			}
-			static get define() {
+			static get props() {
 				return {
 					greeting: { type: String, default: "Hi" },
 					object: { type: String, default: "person" }
@@ -227,7 +227,7 @@ if (browserSupports.customElements) {
 	});
 
 	QUnit.test("Lifecycle methods return the element", function(assert) {
-		class BindingsMethodsElement extends StacheDefineElement {}
+		class BindingsMethodsElement extends StacheElement {}
 		customElements.define("bindings-methods-element", BindingsMethodsElement);
 
 		let obj = new BindingsMethodsElement()

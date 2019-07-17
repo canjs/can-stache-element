@@ -3,18 +3,18 @@ const Scope = require("can-view-scope");
 const viewCallbacks = require("can-view-callbacks");
 const stache = require("can-stache");
 const SimpleObservable = require("can-simple-observable");
-const StacheDefineElement = require("./can-stache-define-element");
+const StacheElement = require("./can-stache-element");
 const browserSupports = require("../test/browser-supports");
 const canReflect = require("can-reflect");
 const dev = require("can-test-helpers").dev;
 
-QUnit.module("can-stache-define-element");
+QUnit.module("can-stache-element");
 
 if (browserSupports.customElements) {
 	QUnit.test("basics", function(assert) {
 		const fixture = document.querySelector("#qunit-fixture");
 
-		class Input extends StacheDefineElement {
+		class Input extends StacheElement {
 			static get view() {
 				return `<p><input value:bind="this.inputValue" on:change="this.handleChange(scope.element.value)"></p>`;
 			}
@@ -26,7 +26,7 @@ if (browserSupports.customElements) {
 		}
 		customElements.define("in-put", Input);
 
-		class Basic extends StacheDefineElement {
+		class Basic extends StacheElement {
 			static get view() {
 				return `
 					<in-put inputValue:bind="this.first" handler:from="this.setFirst"></in-put>
@@ -35,7 +35,7 @@ if (browserSupports.customElements) {
 				`;
 			}
 
-			static get define() {
+			static get props() {
 				return {
 					first: { type: String, default: "Kevin" },
 					last: { type: String, default: "McCallister" }
@@ -77,7 +77,7 @@ if (browserSupports.customElements) {
 	});
 
 	QUnit.test("can be rendered by canViewCallbacks.tagHandler", function(assert) {
-		class App extends StacheDefineElement {
+		class App extends StacheElement {
 			static get view() {
 				return "Hello {{greeting}}";
 			}
@@ -96,8 +96,8 @@ if (browserSupports.customElements) {
 	});
 
 	QUnit.test("Can initialize with el.initialize()", function(assert) {
-		class El extends StacheDefineElement {
-			static get define() {
+		class El extends StacheElement {
+			static get props() {
 				return {
 					prop: "default"
 				};
@@ -112,7 +112,7 @@ if (browserSupports.customElements) {
 	QUnit.test("programatically instantiated elements get disconnected when removed", function(assert) {
 		let done = assert.async();
 
-		class Person extends StacheDefineElement {
+		class Person extends StacheElement {
 			static get view() {
 				return `
 					<p>person</p>
@@ -125,7 +125,7 @@ if (browserSupports.customElements) {
 		}
 		customElements.define("per-son", Person);
 
-		class App extends StacheDefineElement {
+		class App extends StacheElement {
 			static get view() {
 				return `
 					<p>
@@ -135,7 +135,7 @@ if (browserSupports.customElements) {
 					</p>
 				`;
 			}
-			static get define() {
+			static get props() {
 				return {
 					showPerson: true,
 					person: {
@@ -170,7 +170,7 @@ if (browserSupports.customElements) {
 
 		const show = new SimpleObservable(false);
 
-		class El extends StacheDefineElement {
+		class El extends StacheElement {
 			connected() {
 				assert.ok(true, "connected");
 			}
@@ -207,7 +207,7 @@ if (browserSupports.customElements) {
 	QUnit.test("addEventListener and removeEventListener work for DOM events", function(assert) {
 		const done = assert.async();
 
-		class El extends StacheDefineElement {}
+		class El extends StacheElement {}
 		customElements.define("add-event-listener-el", El);
 
 		const el = new El();
@@ -224,12 +224,12 @@ if (browserSupports.customElements) {
 	});
 
 	QUnit.test("value() updates", function(assert) {
-		class Foo extends StacheDefineElement {
+		class Foo extends StacheElement {
 			static get view() {
 				return '<span>{{second}}</span>';
 			}
 
-			static get define() {
+			static get props() {
 				return {
 					first: "one",
 					second: {
@@ -274,8 +274,8 @@ if (browserSupports.customElements) {
 	});
 
 	dev.devOnlyTest("Warns when a property matches an event name", function(assert) {
-		class ClickPropEl extends StacheDefineElement {
-			static get define() {
+		class ClickPropEl extends StacheElement {
+			static get props() {
 				return {
 					click: String,
 					get other() {
