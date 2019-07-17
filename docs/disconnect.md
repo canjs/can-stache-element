@@ -1,23 +1,23 @@
-@function can-stache-define-element/lifecycle-methods.disconnect disconnect
-@parent can-stache-define-element/lifecycle-methods 5
+@function can-stache-element/lifecycle-methods.disconnect disconnect
+@parent can-stache-element/lifecycle-methods 5
 
-@description Disconnect a `StacheDefineElement` instance from the DOM.
+@description Disconnect a `StacheElement` instance from the DOM.
 
 @signature `disconnect()`
 
-  Calling `disconnect` will clean up an element's event handlers and call its [can-stache-define-element/lifecycle-hooks.disconnected disconnected hook]. Normally this is called by the [can-stache-define-element/lifecycle-methods.disconnectedCallback], but can be called manually for testing:
+  Calling `disconnect` will clean up an element's event handlers and call its [can-stache-element/lifecycle-hooks.disconnected disconnected hook]. Normally this is called by the [can-stache-element/lifecycle-methods.disconnectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheDefineElement } from "can/everything";
+  import { StacheElement } from "can/everything";
 
   const logs = [];
 
-  class MyElement extends StacheDefineElement {
+  class MyElement extends StacheElement {
 	  static view = `
 		  <p>{{this.name}} has been running for {{this.time}} seconds</p>
 	  `;
 
-	  static define = {
+	  static props = {
 		  name: { type: String, default: "App" },
 		  time: { type: Number, default: 0 }
 	  };
@@ -76,7 +76,7 @@ For testing purposes or integration with other libraries, `disconnect` can be ca
 The first time `disconnect` is called, it will:
 
 - call [can-event-queue/map/map.stopListening stopListening].
-- call a teardown handler returned by the [can-stache-define-element/lifecycle-hooks.connected connected hook].
-- call the [can-stache-define-element/lifecycle-hooks.disconnected disconnected hook].
+- call a teardown handler returned by the [can-stache-element/lifecycle-hooks.connected connected hook].
+- call the [can-stache-element/lifecycle-hooks.disconnected disconnected hook].
 
 Subsequent calls to `disconnect` will not have any effect.

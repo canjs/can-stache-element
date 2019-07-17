@@ -1,5 +1,5 @@
-@property {String|can-stache.view}  can-stache-define-element/static.view view
-@parent can-stache-define-element/static 0
+@property {String|can-stache.view}  can-stache-element/static.view view
+@parent can-stache-element/static 0
 
 @description Provides a way to render the element's innerHTML using a [can-stache] template.
 
@@ -10,8 +10,8 @@
   ```html
   <count-er></count-er>
   <script type="module">
-  import { StacheDefineElement } from "can/everything";
-  class Counter extends StacheDefineElement {
+  import { StacheElement } from "can/everything";
+  class Counter extends StacheElement {
   	static view = `
   		<p>Count: <span>1</span></p>
   	`;
@@ -28,8 +28,8 @@
   For browsers that do not support class fields (and applications not using a transpiler), properties can be defined using a `static` getter like shown below.
 
   ```js
-  import { StacheDefineElement } from "can/everything";
-  class Counter extends StacheDefineElement {
+  import { StacheElement } from "can/everything";
+  class Counter extends StacheElement {
   	static get view() {
   		return `
 			<p>Count: <span>1</span></p>
@@ -43,11 +43,11 @@
   A function can be passed as the view property. This is useful for loading views in their own files and loading them with [steal-stache] or similar.
 
   ```js
-  import { StacheDefineElement, stache } from "can/everything";
+  import { StacheElement, stache } from "can/everything";
 
   const renderer = stache(`<p>Count: <span>1</span></p>`);
 
-  class Counter extends StacheDefineElement {
+  class Counter extends StacheElement {
 	  static view = renderer;
   }
   ```
@@ -56,7 +56,7 @@
 
 ## Background
 
-StacheDefineElement uses [can-stache] views. Please read [can-stache stache's documentation] to understand how to do things like:
+StacheElement uses [can-stache] views. Please read [can-stache stache's documentation] to understand how to do things like:
 
 - Write values to the page
 - Branching logic
@@ -72,16 +72,16 @@ There are three things to understand about an element's view:
 
   - __Rendered with the element__ - The view is rendered with `this` as the element instance.
   - __Rendered into the element's innerHTML__ - The rendered result of the view is inserted into the element.
-  - __Rendered at the right time__ - The view is rendered when the element is [can-stache-define-element/lifecycle-methods.connectedCallback inserted into the page] or when [can-stache-define-element/lifecycle-methods.render] is called for testing.
+  - __Rendered at the right time__ - The view is rendered when the element is [can-stache-element/lifecycle-methods.connectedCallback inserted into the page] or when [can-stache-element/lifecycle-methods.render] is called for testing.
 
 ## Rendered with the element
 
 The view is rendered with `this` as the element instance. The following prints the `age` property of the element.
 
 ```js
-import { StacheDefineElement } from "can/everything";
+import { StacheElement } from "can/everything";
 
-class Person extends StacheDefineElement {
+class Person extends StacheElement {
 	static view = `
 		<p>You are {{this.age}}</p>
 	`;
@@ -101,7 +101,7 @@ The view specified by `view` is rendered directly within the custom element.
 For example the following element:
 
 ```js
-class Greeting extends StacheDefineElement {
+class Greeting extends StacheElement {
 	static view = `
 		<h1>Hello There</h1>
 	`;
@@ -143,13 +143,13 @@ If there is existing content within the source html, like:
 
 ## Rendered at the right time
 
-StacheDefineElement handles rendering the view at the right time. In normal application use, this is done during the [can-stache-define-element/lifecycle-methods.connectedCallback connectedCallback], which is called by the browser when the element is inserted into the page as part of the normal lifecycle of custom elements.
+StacheElement handles rendering the view at the right time. In normal application use, this is done during the [can-stache-element/lifecycle-methods.connectedCallback connectedCallback], which is called by the browser when the element is inserted into the page as part of the normal lifecycle of custom elements.
 
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 	static view = `
 		<p>Count: <span>1</span></p>
 	`;
@@ -166,11 +166,11 @@ customElements.define("count-er", Counter);
 ```
 @codepen
 
-For testing purposes, the [can-stache-define-element/lifecycle-methods.render] method can be called to manually render the view. This means that the view can be tested without putting the element in the page, which greatly improves the performance of tests.
+For testing purposes, the [can-stache-element/lifecycle-methods.render] method can be called to manually render the view. This means that the view can be tested without putting the element in the page, which greatly improves the performance of tests.
 
 ```js
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 	static view = `
 		<p>Count: <span>1</span></p>
 	`;
@@ -197,12 +197,12 @@ The [guides/setup] guide has details on how to import stache views directly. For
 the following example uses `import view from "./app.stache";`:
 
 ```js
-import { StacheDefineElement } from "can/everything";
+import { StacheElement } from "can/everything";
 import view from "./app.stache";
 
-class MyApp extends StacheDefineElement {
+class MyApp extends StacheElement {
 	static view = view;
-	static define = {
+	static props = {
       message: "Hello World"
 	};
 }

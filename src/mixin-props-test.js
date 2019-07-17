@@ -1,12 +1,12 @@
 const QUnit = require("steal-qunit");
-const mixinDefine = require("./mixin-define");
+const mixinDefine = require("./mixin-props");
 const type = require("can-type");
 
-QUnit.module("can-stache-define-element - mixin-define");
+QUnit.module("can-stache-element - mixin-props");
 
 QUnit.test("basics", function(assert) {
 	class DefineElement extends mixinDefine(Object) {
-		static get define() {
+		static get props() {
 			return {
 				age: { type: type.convert(Number), default: 32 }
 			};

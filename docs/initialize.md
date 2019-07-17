@@ -1,20 +1,20 @@
-@typedef {function} can-stache-define-element/lifecycle-methods.initialize initialize
-@parent can-stache-define-element/lifecycle-methods 1
+@typedef {function} can-stache-element/lifecycle-methods.initialize initialize
+@parent can-stache-element/lifecycle-methods 1
 
-@description Initialize a `StacheDefineElement` instance with property values.
+@description Initialize a `StacheElement` instance with property values.
 
 @signature `initialize(props)`
 
-  Calling `initialize` will set up property definitions and set initial property values. Normally this is called by the [can-stache-define-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
+  Calling `initialize` will set up property definitions and set initial property values. Normally this is called by the [can-stache-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheDefineElement } from "can/everything";
+  import { StacheElement } from "can/everything";
 
-  class MyElement extends StacheDefineElement {
+  class MyElement extends StacheElement {
 	  static view = `
 		  <p>{{this.age}}</p>
 	  `;
-	  static define = {
+	  static props = {
 		  age: { type: Number, default: 30 }
 	  };
   }

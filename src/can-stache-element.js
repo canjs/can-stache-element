@@ -1,7 +1,7 @@
 "use strict";
 
 const mixinLifecycleMethods = require("./mixin-lifecycle-methods");
-const mixinDefine = require("./mixin-define");
+const mixinProps = require("./mixin-props");
 const mixinStacheView = require("./mixin-stache-view");
 const mixinViewModelSymbol = require("./mixin-viewmodel-symbol");
 const mixinBindings = require("./mixin-bindings");
@@ -12,7 +12,7 @@ const initializeSymbol = Symbol.for("can.initialize");
 const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
 
 function DeriveElement(BaseElement = HTMLElement) {
-	class StacheDefineElement extends
+	class StacheElement extends
 	// add lifecycle methods
 	// this needs to happen after other mixins that implement these methods
 	// so that this.<lifecycleMethod> is the actual lifecycle method which
@@ -24,8 +24,8 @@ function DeriveElement(BaseElement = HTMLElement) {
 			mixinViewModelSymbol(
 				// mix in stache renderer from `static view` property
 				mixinStacheView(
-					// add getters/setters from `static define` property
-					mixinDefine(BaseElement)
+					// add getters/setters from `static props` property
+					mixinProps(BaseElement)
 				)
 			)
 		)
@@ -48,15 +48,15 @@ function DeriveElement(BaseElement = HTMLElement) {
 		}
 	}
 
-	function StacheDefineElementConstructorFunction() {
-		const self = Reflect.construct(StacheDefineElement, arguments, this.constructor);
+	function StacheElementConstructorFunction() {
+		const self = Reflect.construct(StacheElement, arguments, this.constructor);
 		return self;
 	}
 
-	StacheDefineElementConstructorFunction.prototype = Object.create(StacheDefineElement.prototype);
-	StacheDefineElementConstructorFunction.prototype.constructor = StacheDefineElementConstructorFunction;
+	StacheElementConstructorFunction.prototype = Object.create(StacheElement.prototype);
+	StacheElementConstructorFunction.prototype.constructor = StacheElementConstructorFunction;
 
-	return StacheDefineElementConstructorFunction;
+	return StacheElementConstructorFunction;
 }
 
 module.exports = DeriveElement();

@@ -1,20 +1,20 @@
-@function can-stache-define-element/lifecycle-methods.connect connect
-@parent can-stache-define-element/lifecycle-methods 3
+@function can-stache-element/lifecycle-methods.connect connect
+@parent can-stache-element/lifecycle-methods 3
 
-@description Connect a `StacheDefineElement` instance to the DOM.
+@description Connect a `StacheElement` instance to the DOM.
 
 @signature `connect(props)`
 
-  Calling `connect` will [can-stache-define-element/lifecycle-methods.initialize] and [can-stache-define-element/lifecycle-methods.render] an element and call its [can-stache-define-element/lifecycle-hooks.connected] hook. Normally this is called by the [can-stache-define-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
+  Calling `connect` will [can-stache-element/lifecycle-methods.initialize] and [can-stache-element/lifecycle-methods.render] an element and call its [can-stache-element/lifecycle-hooks.connected] hook. Normally this is called by the [can-stache-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheDefineElement } from "can/everything";
+  import { StacheElement } from "can/everything";
 
-  class MyElement extends StacheDefineElement {
+  class MyElement extends StacheElement {
 	  static view = `
 		  <p>{{this.age}}</p>
 	  `;
-	  static define = {
+	  static props = {
 		  age: { type: Number, default: 30 }
 	  };
 	  connected() {
@@ -46,8 +46,8 @@ For testing purposes or integration with other libraries, `connect` can be calle
 
 The first time `connect` is called, it will:
 
-- [can-stache-define-element/lifecycle-methods.initialize] the element with the property values passed to `connect`.
-- [can-stache-define-element/lifecycle-methods.render] the stache view into the element.
-- call the [can-stache-define-element/lifecycle-hooks.connected] lifecycle hook.
+- [can-stache-element/lifecycle-methods.initialize] the element with the property values passed to `connect`.
+- [can-stache-element/lifecycle-methods.render] the stache view into the element.
+- call the [can-stache-element/lifecycle-hooks.connected] lifecycle hook.
 
 Subsequent calls to `connect` will not have any effect.

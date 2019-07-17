@@ -1,38 +1,38 @@
-@module {function} can-stache-define-element
+@module {function} can-stache-element
 @parent can-views
 @collection can-ecosystem
-@group can-stache-define-element/static 0 static
-@group can-stache-define-element/lifecycle-methods 1 lifecycle methods
-@group can-stache-define-element/lifecycle-hooks 2 lifecycle hooks
-@alias can.StacheDefineElement
+@group can-stache-element/static 0 static
+@group can-stache-element/lifecycle-methods 1 lifecycle methods
+@group can-stache-element/lifecycle-hooks 2 lifecycle hooks
+@alias can.StacheElement
 @package ../package.json
 @outline 2
 
-@description Create a custom element with [can-define-object DefineObject]-like properties and [can-stache stache views].
+@description Create a custom element with [can-define-object ObservableObject]-like properties and [can-stache stache views].
 
-@signature `StacheDefineElement`
+@signature `StacheElement`
 
-  `can-stache-define-element` exports a `StacheDefineElement` class used to define custom elements.
+  `can-stache-element` exports a `StacheElement` class used to define custom elements.
 
-  Extend `StacheDefineElement` with a:
+  Extend `StacheElement` with a:
 
   - `static view` - A [can-stache stache] view.
-  - `static define` - [can-define-object DefineObject]-like property definitions.
+  - `static props` - [can-define-object ObservableObject]-like property definitions.
   - getters, setters, and methods.
-  - lifecycle hooks - [can-stache-define-element/lifecycle-hooks.connected] and [can-stache-define-element/lifecycle-hooks.disconnected].
+  - lifecycle hooks - [can-stache-element/lifecycle-hooks.connected] and [can-stache-element/lifecycle-hooks.disconnected].
 
   The following defines a  `<count-er>` element:
 
   ```html
   <count-er></count-er>
   <script type="module">
-  import { StacheDefineElement } from "can/everything";
-  class Counter extends StacheDefineElement {
+  import { StacheElement } from "can/everything";
+  class Counter extends StacheElement {
 	  static view = `
 		  Count: <span>{{this.count}}</span>
 		  <button on:click="this.increment()">+1</button>
 	  `;
-	  static define = {
+	  static props = {
 		  count: 0
 	  };
 	  increment() {
@@ -66,17 +66,17 @@
 
 ## Basic Use
 
-The following sections cover everything you need to create a custom element with `StacheDefineElement`.
+The following sections cover everything you need to create a custom element with `StacheElement`.
 
-### Defining a custom element with a StacheDefineElement constructor
+### Defining a custom element with a StacheElement constructor
 
-In order to create a basic custom element with `StacheDefineElement`, create a class that extends `StacheDefineElement` and call [customElements.define](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define) with the tag for the element and the constructor:
+In order to create a basic custom element with `StacheElement`, create a class that extends `StacheElement` and call [customElements.define](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define) with the tag for the element and the constructor:
 
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 }
 customElements.define("count-er", Counter);
 </script>
@@ -88,15 +88,15 @@ This custom element can be used by putting a `<count-er></count-er>` tag in an H
 
 ### Defining an element's view
 
-StacheDefineElement uses [can-stache] to render live-bound HTML as the element's innerHTML.
+StacheElement uses [can-stache] to render live-bound HTML as the element's innerHTML.
 
-To create a [can-stache] view for the element, add a [can-stache-define-element/static.view static view] property to the class:
+To create a [can-stache] view for the element, add a [can-stache-element/static.view static view] property to the class:
 
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 	static view = `
 		Count: <span>{{this.count}}</span>
 		<button on:click="this.increment()">+1</button>
@@ -112,20 +112,20 @@ The element's HTML will automatically update when any of the element's propertie
 
 ### Defining an element's properties
 
-To manage the logic and state of an element, [can-define-object DefineObject]-like property definitions can be added to explicitly configure how an element's properties are defined.
+To manage the logic and state of an element, [can-define-object ObservableObject]-like property definitions can be added to explicitly configure how an element's properties are defined.
 
-To add property definitions, add a [can-stache-define-element/static.define static define] object to the class:
+To add property definitions, add a [can-stache-element/static.props static props] object to the class:
 
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 	static view = `
 		Count: <span>{{this.count}}</span>
 		<button on:click="this.increment()">+1</button>
 	`;
-	static define = {
+	static props = {
 		count: 6
 	};
 }
@@ -142,13 +142,13 @@ Methods (as well as getters and setters) can be added to the class body as well:
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 	static view = `
 		Count: <span>{{this.count}}</span>
 		<button on:click="this.increment()">+1</button>
 	`;
-	static define = {
+	static props = {
 		count: 6
 	};
 	increment() {
@@ -163,19 +163,19 @@ customElements.define("count-er", Counter);
 
 ### Lifecycle hooks
 
-If needed, [can-stache-define-element/lifecycle-hooks.connected] and [can-stache-define-element/lifecycle-hooks.disconnected] lifecycle hooks can be added to the class body. These will be called when the element is added and removed from the page, respectively.
+If needed, [can-stache-element/lifecycle-hooks.connected] and [can-stache-element/lifecycle-hooks.disconnected] lifecycle hooks can be added to the class body. These will be called when the element is added and removed from the page, respectively.
 
 ```html
 <button id="add">Add Timer</button>
 <button id="remove">Remove Timer</button>
 <script type="module">
-import { StacheDefineElement } from "can/everything";
+import { StacheElement } from "can/everything";
 
-class Timer extends StacheDefineElement {
+class Timer extends StacheElement {
 	static view = `
 		<p>{{this.time}}</p>
 	`;
-	static define = {
+	static props = {
 		time: { type: Number, default: 0 },
 		timerId: Number
 	};
@@ -213,33 +213,33 @@ Custom elements have [lifecycle methods](https://developer.mozilla.org/en-US/doc
 - `connectedCallback` is called when the element is added to the page
 - `disconnectedCallback` is called when the element is removed from the page
 
-StacheDefineElement uses the custom element lifecycle methods to initiate its own lifecycle.
+StacheElement uses the custom element lifecycle methods to initiate its own lifecycle.
 
 The `connectedCallback` will call:
 
-1. [can-stache-define-element/lifecycle-methods.initialize] - to set up the element's properties
-2. [can-stache-define-element/lifecycle-methods.render] - to create the innerHTML of the element
-3. [can-stache-define-element/lifecycle-methods.connect] - to connect the element to the DOM
+1. [can-stache-element/lifecycle-methods.initialize] - to set up the element's properties
+2. [can-stache-element/lifecycle-methods.render] - to create the innerHTML of the element
+3. [can-stache-element/lifecycle-methods.connect] - to connect the element to the DOM
 
 The `disconnectedCallback` will call:
 
-1. [can-stache-define-element/lifecycle-methods.disconnect] - to clean up event handlers and call teardown functions
+1. [can-stache-element/lifecycle-methods.disconnect] - to clean up event handlers and call teardown functions
 
-StacheDefineElement's lifecycle methods can be used to test each part of the lifecycle. The following sections explain how to do this.
+StacheElement's lifecycle methods can be used to test each part of the lifecycle. The following sections explain how to do this.
 
 ### Testing an element's properties and methods
 
-To test an element's properties and methods, call the [can-stache-define-element/lifecycle-methods.initialize] method with any initial property values:
+To test an element's properties and methods, call the [can-stache-element/lifecycle-methods.initialize] method with any initial property values:
 
 
 ```js
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 	static view = `
 		Count: <span>{{this.count}}</span>
 		<button on:click="this.increment()">+1</button>
 	`;
-	static define = {
+	static props = {
 		count: 6
 	};
 	increment() {
@@ -260,16 +260,16 @@ counter.count === 21; // -> true
 
 ### Testing an element's view
 
-To test an element's view, call the [can-stache-define-element/lifecycle-methods.render] method with any initial property values:
+To test an element's view, call the [can-stache-element/lifecycle-methods.render] method with any initial property values:
 
 ```js
-import { StacheDefineElement } from "can/everything";
-class Counter extends StacheDefineElement {
+import { StacheElement } from "can/everything";
+class Counter extends StacheElement {
 	static view = `
 		Count: <span>{{this.count}}</span>
 		<button on:click="this.increment()">+1</button>
 	`;
-	static define = {
+	static props = {
 		count: 6
 	};
 	increment() {
@@ -290,16 +290,16 @@ counter.firstElementChild.innerHTML === "21"; // -> true
 
 ### Testing an element's lifecycle hooks
 
-To test the functionality of the `connected` or `disconnected` hooks, you can call the [can-stache-define-element/lifecycle-methods.connect] or [can-stache-define-element/lifecycle-methods.disconnect] method.
+To test the functionality of the `connected` or `disconnected` hooks, you can call the [can-stache-element/lifecycle-methods.connect] or [can-stache-element/lifecycle-methods.disconnect] method.
 
 ```js
-import { StacheDefineElement } from "can/everything";
+import { StacheElement } from "can/everything";
 
-class Timer extends StacheDefineElement {
+class Timer extends StacheElement {
 	static view = `
 		<p>{{this.time}}</p>
 	`;
-	static define = {
+	static props = {
 		time: { type: Number, default: 0 },
 		timerId: Number
 	};

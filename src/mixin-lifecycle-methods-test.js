@@ -4,7 +4,7 @@ const browserSupports = require("../test/browser-supports");
 
 const inSetupSymbol = Symbol.for("can.initializing");
 
-QUnit.module("can-stache-define-element - mixin-lifecycle-methods");
+QUnit.module("can-stache-element - mixin-lifecycle-methods");
 
 QUnit.test("connectedCallback calls hooks - initialize, render, connect", function(assert) {
 	assert.expect(3);

@@ -1,20 +1,20 @@
-@function can-stache-define-element/lifecycle-methods.render render
-@parent can-stache-define-element/lifecycle-methods 2
+@function can-stache-element/lifecycle-methods.render render
+@parent can-stache-element/lifecycle-methods 2
 
-@description Render a `StacheDefineElement` instance.
+@description Render a `StacheElement` instance.
 
 @signature `render(props)`
 
-  Calling `render` will [can-stache-define-element/lifecycle-methods.initialize] an element and render its [can-stache-define-element/static.view] into its `innerHTML`. Normally this is called by the [can-stache-define-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
+  Calling `render` will [can-stache-element/lifecycle-methods.initialize] an element and render its [can-stache-element/static.view] into its `innerHTML`. Normally this is called by the [can-stache-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheDefineElement } from "can/everything";
+  import { StacheElement } from "can/everything";
 
-  class MyElement extends StacheDefineElement {
+  class MyElement extends StacheElement {
 	  static view = `
 		  <p>{{this.age}}</p>
 	  `;
-	  static define = {
+	  static props = {
 		  age: { type: Number, default: 30 }
 	  };
   }
@@ -40,7 +40,7 @@ For testing purposes or integration with other libraries, `render` can be called
 
 The first time `render` is called, it will:
 
-- [can-stache-define-element/lifecycle-methods.initialize] the element with the property values passed to `render`.
+- [can-stache-element/lifecycle-methods.initialize] the element with the property values passed to `render`.
 - render the stache view into the element.
 
 Subsequent calls to `render` will not have any effect.

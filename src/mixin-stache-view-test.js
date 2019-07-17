@@ -4,7 +4,7 @@ const mixinStacheView = require("./mixin-stache-view");
 const browserSupports = require("../test/browser-supports");
 const nodeLists = require("can-view-nodelist");
 
-QUnit.module("can-stache-define-element - mixin-stache-view");
+QUnit.module("can-stache-element - mixin-stache-view");
 
 if (browserSupports.customElements) {
 	QUnit.test("basics", function(assert) {
