@@ -5,9 +5,6 @@ const keyObservable = require("can-simple-observable/key/key");
 const canReflect = require("can-reflect");
 const Bind = require("can-bind");
 
-// make sure bindings work
-require("can-stache-bindings");
-
 const getValueSymbol = Symbol.for("can.getValue");
 const setValueSymbol = Symbol.for("can.setValue");
 const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
@@ -32,13 +29,11 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 				const bindings = [];
 
 				canReflect.eachKey(savedBindings, (parent, propName) => {
-
 					var canGetParentValue = parent != null && !!parent[getValueSymbol];
 					var canSetParentValue = parent != null && !!parent[setValueSymbol];
 
 					// If we can get or set the value, then we’ll create a binding
 					if (canGetParentValue === true || canSetParentValue) {
-
 						// Create an observable for reading/writing the viewModel
 						// even though it doesn't exist yet.
 						var child = keyObservable(this, propName);
@@ -47,7 +42,8 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 						var canBinding = new Bind({
 							child: child,
 							parent: parent,
-							queue: "domUI",
+							queue: "dom",
+							element: this,
 
 							//!steal-remove-start
 							// For debugging: the names that will be assigned to the updateChild
@@ -72,7 +68,6 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 								bindingAttributeName: propName
 							}
 						});
-
 					} else {
 						// Can’t get or set the value, so assume it’s not an observable
 						props[propName] = parent;
@@ -91,33 +86,31 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 						initializeData.onTeardowns[attrName]();
 					}
 				};
-
-				this[metaSymbol].other = true;
 			} else {
 				if (super.initialize) {
 					super.initialize(props);
 				}
 			}
 		}
-		render(props, renderOptions, parentNodeList) {
+		render(props, renderOptions) {
 			const viewRoot = this.viewRoot || this;
 			viewRoot.innerHTML = "";
 
 			if(super.render) {
-				super.render(props, renderOptions, parentNodeList);
+				super.render(props, renderOptions);
 			}
 		}
 		disconnect() {
 			if(this[metaSymbol] && this[metaSymbol]._connectedBindingsTeardown) {
 				this[metaSymbol]._connectedBindingsTeardown();
 				this[metaSymbol]._connectedBindingsTeardown = null;
-				this[lifecycleStatusSymbol] = {
-					initialized: false,
-					rendered: false,
-					connected: false,
-					disconnected: true
-				};
 			}
+			this[lifecycleStatusSymbol] = {
+				initialized: false,
+				rendered: false,
+				connected: false,
+				disconnected: true
+			};
 			if (super.disconnect) {
 				super.disconnect();
 			}

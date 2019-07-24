@@ -4,7 +4,7 @@ const viewCallbacks = require("can-view-callbacks");
 const stache = require("can-stache");
 const SimpleObservable = require("can-simple-observable");
 const StacheElement = require("./can-stache-element");
-const browserSupports = require("../test/browser-supports");
+const browserSupports = require("../test/helpers").browserSupports;
 const canReflect = require("can-reflect");
 const dev = require("can-test-helpers").dev;
 
@@ -16,7 +16,7 @@ if (browserSupports.customElements) {
 
 		class Input extends StacheElement {
 			static get view() {
-				return `<p><input value:bind="this.inputValue" on:change="this.handleChange(scope.element.value)"></p>`;
+				return `<p><input value:from="this.inputValue" on:change="this.handleChange(scope.element.value)"></p>`;
 			}
 
 			handleChange(val) {
@@ -109,7 +109,7 @@ if (browserSupports.customElements) {
 		assert.equal(el.prop, "value", "initialized with values provided to initialize");
 	});
 
-	QUnit.test("programatically instantiated elements get disconnected when removed", function(assert) {
+	QUnit.skip("programatically instantiated elements get disconnected when removed", function(assert) {
 		let done = assert.async();
 
 		class Person extends StacheElement {

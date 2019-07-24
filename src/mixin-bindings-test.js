@@ -2,7 +2,8 @@ const QUnit = require("steal-qunit");
 const StacheElement = require("./can-stache-element");
 const value = require("can-value");
 
-const browserSupports = require("../test/browser-supports");
+const testHelpers = require("../test/helpers");
+const browserSupports = testHelpers.browserSupports;
 const canReflect = require("can-reflect");
 
 let fixture;
@@ -14,6 +15,8 @@ QUnit.module("can-stache-element - mixin-bindings", {
 
 if (browserSupports.customElements) {
 	QUnit.test("basics work", function(assert) {
+		const done = assert.async();
+
 		class BasicBindingsElement extends StacheElement {
 			static get view() {
 				return `<h1>{{message}}</h1>`;
@@ -42,40 +45,48 @@ if (browserSupports.customElements) {
 		// INSERT ELEMENT
 		fixture.appendChild(basicBindingsElement);
 
-		assert.equal(basicBindingsElement.message, "Hello", "properties initialized");
-		assert.equal(basicBindingsElement.innerHTML, "<h1>Hello</h1>", "template rendered" );
+		testHelpers.afterMutation(() => {
+			assert.equal(basicBindingsElement.message, "Hello", "properties initialized");
+			assert.equal(basicBindingsElement.innerHTML, "<h1>Hello</h1>", "template rendered" );
 
-		// UPDATE observable
-		messageObservable.value = "HOWDY";
+			// UPDATE observable
+			messageObservable.value = "HOWDY";
+			assert.equal(basicBindingsElement.message, "HOWDY", "element property value changed");
+			assert.equal(basicBindingsElement.innerHTML, "<h1>HOWDY</h1>", "html updated" );
 
-		assert.equal(basicBindingsElement.message, "HOWDY", "element property value changed");
-		assert.equal(basicBindingsElement.innerHTML, "<h1>HOWDY</h1>", "html updated" );
+			testHelpers.afterMutation(() => {
+				// UPDATE element
+				basicBindingsElement.message = "Hola!";
 
-		// UPDATE element
-		basicBindingsElement.message = "Hola!";
+				assert.equal(messageObservable.value, "Hola!", "observable updated via two-way binding");
 
-		assert.equal(messageObservable.value, "Hola!", "observable updated via two-way binding");
+				// REMOVE ELEMENT
+				fixture.removeChild(basicBindingsElement);
 
-		// REMOVE ELEMENT
-		fixture.removeChild(basicBindingsElement);
+				testHelpers.afterMutation(() => {
+					//basicBindingsElement[state].isInitialized //-> false
 
-		//basicBindingsElement[state].isInitialized //-> false
+					/* Question 2: Should we blow away the innerHTML?
+					 *  + It won't be live anymore
+					 *  - It will be unnecessarily expensive to do this
+					 * */
 
-		/* Question 2: Should we blow away the innerHTML?
-		 *  + It won't be live anymore
-		 *  - It will be unnecessarily expensive to do this
-		 * */
+					assert.equal( canReflect.isBound(messageObservable), false, "the observable is not bound" );
+					assert.equal( canReflect.isBound(basicBindingsElement), false, "the element is not bound" );
 
-		assert.equal( canReflect.isBound(messageObservable), false, "the observable is not bound" );
-		assert.equal( canReflect.isBound(basicBindingsElement), false, "the element is not bound" );
+					// INSERT ELEMENT AGAIN
+					messageObservable.value = "GOODBYE";
 
-		// INSERT ELEMENT AGAIN
-		messageObservable.value = "GOODBYE";
+					fixture.appendChild(basicBindingsElement);
+					testHelpers.afterMutation(() => {
+						assert.equal(basicBindingsElement.message, "GOODBYE", "properties initialized after re-insertion");
+						assert.equal(basicBindingsElement.innerHTML, "<h1>GOODBYE</h1>", "template rendered" );
 
-		fixture.appendChild(basicBindingsElement);
-		assert.equal(basicBindingsElement.message, "GOODBYE", "properties initialized after re-insertion");
-		assert.equal(basicBindingsElement.innerHTML, "<h1>GOODBYE</h1>", "template rendered" );
-
+						done();
+					});
+				});
+			});
+		});
 	});
 
 	QUnit.test("Everything is properly torn down", function(assert) {
@@ -173,8 +184,8 @@ if (browserSupports.customElements) {
 			app.on('element', function onSecond() {
 				app.off('element', onSecond);
 
-				assert.equal(oneId, 1, "Has its original id");
-				assert.equal(twoId, 2, "Has its own id");
+				assert.equal(oneId, 1, "<o-ne> Has its original id");
+				assert.equal(twoId, 2, "<t-wo> Has its own id");
 				done();
 			});
 
@@ -182,7 +193,7 @@ if (browserSupports.customElements) {
 
 			app.increment();
 
-			assert.equal(oneEl.querySelector('#oneid').textContent, "1", "Has not changed");
+			assert.equal(oneEl.querySelector('#oneid').textContent, "1", "<o-ne> Has not changed");
 		});
 	});
 

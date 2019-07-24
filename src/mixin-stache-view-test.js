@@ -1,8 +1,7 @@
 const QUnit = require("steal-qunit");
 const stache = require("can-stache");
 const mixinStacheView = require("./mixin-stache-view");
-const browserSupports = require("../test/browser-supports");
-const nodeLists = require("can-view-nodelist");
+const browserSupports = require("../test/helpers").browserSupports;
 
 QUnit.module("can-stache-element - mixin-stache-view");
 
@@ -100,31 +99,6 @@ if (browserSupports.customElements) {
 		app.render();
 
 		assert.equal(app.innerHTML, "Hello World", "render method renders the static `view` property as stache");
-	});
-
-	QUnit.test("renderer is passed options object and nodelist if provided", function(assert) {
-		const options = { some: "options" };
-		const nodelist = nodeLists.register([], function(){}, true, false);
-
-		const renderer = function(el, optionsArg, nodelistArg) {
-			assert.equal(optionsArg, options, "options");
-			assert.deepEqual(nodelistArg, nodelist, "nodelist like object");
-			return document.createElement("p");
-		};
-
-		class App extends mixinStacheView(HTMLElement) {
-			static get view() {
-				return renderer;
-			}
-
-			constructor() {
-				super();
-			}
-		}
-		customElements.define("stache-renderer-args-app", App);
-
-		const app = new App();
-		app.render({}, options, nodelist);
 	});
 
 	QUnit.test("element works without a `view`", function(assert) {
