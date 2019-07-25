@@ -109,7 +109,7 @@ if (browserSupports.customElements) {
 		assert.equal(el.prop, "value", "initialized with values provided to initialize");
 	});
 
-	QUnit.skip("programatically instantiated elements get disconnected when removed", function(assert) {
+	QUnit.test("programatically instantiated elements get disconnected when removed", function(assert) {
 		let done = assert.async();
 
 		class Person extends StacheElement {
