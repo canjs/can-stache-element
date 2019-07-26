@@ -31,7 +31,7 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 				this.constructor[rendererSymbol] = renderer;
 			}
 
-			const frag = renderer(this, renderOptions/*, nodeList*/);
+			const frag = renderer(this, renderOptions);
 
 			const viewRoot = this.viewRoot || this;
 			domMutateNode.appendChild.call(viewRoot, frag);

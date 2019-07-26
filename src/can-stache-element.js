@@ -37,7 +37,7 @@ function DeriveElement(BaseElement = HTMLElement) {
 				el,
 				tagData,
 				function makeViewModel(initialViewmodelData) {
-					el.render(initialViewmodelData, {}, tagData.parentNodeList);
+					el.render(initialViewmodelData);
 					return el;
 				}
 			);
