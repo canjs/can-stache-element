@@ -5,3 +5,4 @@ import "../src/mixin-stache-view-test";
 import "../src/mixin-viewmodel-symbol-test";
 import "../src/import-export-steal-test";
 import "../src/mixin-bindings-test";
+import "../src/mixin-initialize-bindings-test";
