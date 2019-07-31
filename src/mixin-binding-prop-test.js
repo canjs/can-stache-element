@@ -1,8 +1,7 @@
 const QUnit = require("steal-qunit");
 const StacheElement = require("./can-stache-element");
-const value = require("can-value");
-const Bind = require("can-bind");
 const type = require("can-type");
+const { fromAttribute } = require("can-observable-bindings");
 
 const testHelpers = require("../test/helpers");
 const browserSupports = testHelpers.browserSupports;
@@ -15,34 +14,35 @@ QUnit.module("can-stache-element - mixin-binding-prop", {
 });
 
 if (browserSupports.customElements) {
-	QUnit.test("basics work", function(assert) {
+	QUnit.test("can set attribute from property", function(assert) {
+		const done = assert.async();
 		class BasicBindingsElement extends StacheElement {
 			static get view() {
-				return `<h1>{{name}}</h1>`;
+				return `<h1>{{person}}</h1>`;
 			}
 
 			static get props() {
 				return {
-					name: {
+					person: {
 						type: type.maybeConvert(String),
-						bind: function (propertyName) {
-							return function (instance) {
-								return new Bind({
-									parent: value.from(instance.getAttribute(propertyName)),
-									child: value.to(instance, propertyName),
-									queue: "domUI"
-								});
-							};
-						}
+						bind: fromAttribute
 					}
 				};
 			}
 		}
-		customElements.define("binding-attribute", BasicBindingsElement);
+		customElements.define("set-attribute", BasicBindingsElement);
 
-		fixture.innerHTML = "<binding-attribute name='Matt'></binding-attribute>";
-		const el = document.querySelector('binding-attribute');
+		fixture.innerHTML = "<set-attribute></set-attribute>";
+		const el = document.querySelector('set-attribute');
+		
+		assert.equal(el.getAttribute('person'), undefined, 'We have not initialized the attribute');
+		assert.equal(el.person, undefined, 'We have not initialized the property');
 
-		assert.equal(el.name, 'Matt', 'We have set the property from the attribute');
+		el.setAttribute('person', 'Justin');
+
+		testHelpers.afterMutation(() => {
+			assert.equal(el.person, 'Justin', 'We have set the property from the attribute');
+			done();
+		});
 	});
 }

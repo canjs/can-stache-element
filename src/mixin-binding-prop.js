@@ -43,7 +43,7 @@ module.exports = function mixinBindingProps(Base = HTMLElement) {
 							},
 							child: {
 								source: "viewModel",
-								exports: false,
+								exports: true,
 								name: propName
 							},
 							bindingAttributeName: propName
