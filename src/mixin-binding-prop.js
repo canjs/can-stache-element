@@ -13,6 +13,9 @@ module.exports = function mixinBindingProps(Base = HTMLElement) {
 			if(this[metaSymbol] === undefined) {
 				this[metaSymbol] = {};
 			}
+			if(this[metaSymbol]._uninitializedBindings === undefined) {
+				this[metaSymbol]._uninitializedBindings = {};
+			}
 
 			mixins.finalizeClass(this.constructor);
 			
@@ -21,7 +24,7 @@ module.exports = function mixinBindingProps(Base = HTMLElement) {
 					const definition = this._define.definitions[propName];
 					if (typeof definition.bind === 'function') {
 						const bindFn = definition.bind(propName);
-						bindingMap.set(propName, bindFn);
+						this[metaSymbol]._uninitializedBindings[propName] = bindFn;
 					}
 				});
 			}
@@ -31,8 +34,8 @@ module.exports = function mixinBindingProps(Base = HTMLElement) {
 				if (this[metaSymbol]._bindings === undefined) {
 					this[metaSymbol]._bindings = [];
 				}
-				bindingMap.forEach((createBind, propName) => {
-					const binding = createBind(this);
+				Object.keys(this[metaSymbol]._uninitializedBindings).forEach(propName => {
+					const binding = this[metaSymbol]._uninitializedBindings[propName](this);
 
 					this[metaSymbol]._bindings.push({
 						binding,
