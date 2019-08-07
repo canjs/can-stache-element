@@ -54,7 +54,7 @@
     "url": "git://github.com/canjs/can-stache-element.git"
   },
   "scripts": {
-    "ci": "npm run test && node test/test-saucelabs.js && npm run compile-to-es5",
+    "ci": "npm run test && node test/test-saucelabs.js",
     "compile-to-es5": "babel src --out-dir dist",
     "detect-cycle": "detect-cyclic-packages",
     "http-server": "http-server -p 3000 --silent",
@@ -62,6 +62,7 @@
     "lint": "fixpack && npm run jshint",
     "postversion": "git push --follow-tags",
     "preversion": "npm test",
+    "prepublishOnly": "npm run compile-to-es5",
     "test": "npm run detect-cycle && npm run lint && npm run testee",
     "testee": "testee test/test.html --browsers firefox"
   },
