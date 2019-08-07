@@ -1,7 +1,7 @@
 {
   "name": "can-stache-element",
   "description": "Create custom elements with can-stache, can-observable-object, and JavaScript classes",
-  "version": "1.0.0-pre.5",
+  "version": "1.0.0-pre.6",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
@@ -61,8 +61,8 @@
     "jshint": "jshint src/*.js test/*.js --config",
     "lint": "fixpack && npm run jshint",
     "postversion": "git push --follow-tags",
-    "preversion": "npm test",
     "prepublishOnly": "npm run compile-to-es5",
+    "preversion": "npm test",
     "test": "npm run detect-cycle && npm run lint && npm run testee",
     "testee": "testee test/test.html --browsers firefox"
   },
