@@ -1,4 +1,5 @@
 "use strict";
+const { mixins } = require("can-observable-mixin");
 
 const metaSymbol = Symbol.for("can.meta");
 
@@ -12,7 +13,7 @@ function baseAttributeChangedCallback () {
 	}
 }
 
-module.exports = function mixinBindingProps(Base = HTMLElement) {
+module.exports = function mixinBindBehaviour(Base = HTMLElement) {
 	class BindingPropsClass extends Base {
 		initialize(props) {
 			if(this[metaSymbol] === undefined) {
@@ -57,4 +58,45 @@ module.exports = function mixinBindingProps(Base = HTMLElement) {
 	});
 
 	return BindingPropsClass;
+};
+
+// We can't set `observedAttributes` on the `StacheElement.prototype` as static properties are
+// not copied over with `Object.create`
+module.exports.initializeObservedAttributes = function initializeObservedAttributes (ctr) {
+	Object.defineProperty(ctr, 'observedAttributes', {
+		get () {
+			// We only want to return `observedAttributes` if we have a `bind` on the
+			// property definition
+			let hasBindDefinition = false;
+			// Run finalizeClass to set up the property definitions
+			mixins.finalizeClass(this);
+			
+			if(this[metaSymbol] === undefined) {
+				this[metaSymbol] = {};
+			}
+			if(this[metaSymbol]._uninitializedBindings === undefined) {
+				this[metaSymbol]._uninitializedBindings = {};
+			}
+
+			// Check that we have property definitions
+			const definitions = this.prototype._define && this.prototype._define.definitions;
+			if (definitions) {
+				// Run through all defitions so we can check if they have a `bind` function
+				Object.keys(definitions).forEach(propName => {
+					const definition = definitions[propName];
+					if (typeof definition.bind === 'function') {
+						const createBindFn = definition.bind(propName);
+						const bindFn = createBindFn(this);
+						// Set up the bindings so that they can be called during initialize
+						// to setup binding starts
+						this[metaSymbol]._uninitializedBindings[propName] = bindFn;
+						hasBindDefinition = true;
+					}
+				});
+			}
+			// Only return `this.observedAttributes` if we have binds otherwise
+			// we create an inifinite loop
+			return hasBindDefinition ? this.observedAttributes : [];
+		}
+	});
 };

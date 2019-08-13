@@ -6,4 +6,4 @@ import "../src/mixin-viewmodel-symbol-test";
 import "../src/import-export-steal-test";
 import "../src/mixin-bindings-test";
 import "../src/mixin-initialize-bindings-test";
-import "../src/mixin-binding-prop-test";
+import "../src/mixin-bind-behaviour-test";
