@@ -7,7 +7,7 @@ const testHelpers = require("../test/helpers");
 const browserSupports = testHelpers.browserSupports;
 
 let fixture;
-QUnit.module("can-stache-element - mixin-binding-prop", {
+QUnit.module("can-stache-element - mixin-bind-behaviour", {
 	beforeEach() {
 		fixture = document.querySelector("#qunit-fixture");
 	}
