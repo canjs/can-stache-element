@@ -14,16 +14,19 @@ QUnit.module("can-stache-element - mixin-binding-prop", {
 });
 
 if (browserSupports.customElements) {
-	QUnit.test("can set attribute from property", function(assert) {
-		const done = assert.async();
+	QUnit.test("can set attribute from properties", function(assert) {
 		class BasicBindingsElement extends StacheElement {
 			static get view() {
-				return `<h1>{{person}}</h1>`;
+				return `<h1>{{fname}} {{lname}}</h1>`;
 			}
 
 			static get props() {
 				return {
-					person: {
+					fname: {
+						type: type.maybeConvert(String),
+						bind: fromAttribute
+					},
+					lname: {
 						type: type.maybeConvert(String),
 						bind: fromAttribute
 					}
@@ -32,17 +35,16 @@ if (browserSupports.customElements) {
 		}
 		customElements.define("set-attribute", BasicBindingsElement);
 
-		fixture.innerHTML = "<set-attribute></set-attribute>";
-		const el = document.querySelector('set-attribute');
+		const el = document.createElement('set-attribute');
+		fixture.appendChild(el);
 		
-		assert.equal(el.getAttribute('person'), undefined, 'We have not initialized the attribute');
-		assert.equal(el.person, undefined, 'We have not initialized the property');
+		assert.equal(el.getAttribute('fname'), undefined, 'We have not initialized the attribute');
+		assert.equal(el.fname, undefined, 'We have not initialized the property');
 
-		el.setAttribute('person', 'Justin');
-
-		testHelpers.afterMutation(() => {
-			assert.equal(el.person, 'Justin', 'We have set the property from the attribute');
-			done();
-		});
+		el.setAttribute('fname', 'Justin');
+		assert.equal(el.fname, 'Justin', 'We have set the property from the attribute');
+		
+		el.setAttribute('lname', 'Meyer');
+		assert.equal(el.lname, 'Meyer', 'We have set the property from the attribute');
 	});
 }
