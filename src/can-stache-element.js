@@ -6,7 +6,8 @@ const mixinStacheView = require("./mixin-stache-view");
 const mixinViewModelSymbol = require("./mixin-viewmodel-symbol");
 const mixinBindings = require("./mixin-bindings");
 const mixinInitializeBindings = require("./mixin-initialize-bindings");
-const mixinBindingProp = require("./mixin-binding-prop");
+const mixinBindBehaviour = require("./mixin-bind-behaviour");
+const { initializeObservedAttributes } = require("./mixin-bind-behaviour");
 
 const canStacheBindings = require("can-stache-bindings");
 
@@ -23,7 +24,7 @@ function DeriveElement(BaseElement = HTMLElement) {
 		// mixin .bindings() method and behavior
 		mixinBindings(
 			// Find all prop definitions and extract `{ bind: () => {} }` for binding initialization
-			mixinBindingProp(
+			mixinBindBehaviour(
 				// Initialize the bindings
 				mixinInitializeBindings(
 					// mix in viewModel symbol used by can-stache-bindings
@@ -63,6 +64,9 @@ function DeriveElement(BaseElement = HTMLElement) {
 
 	StacheElementConstructorFunction.prototype = Object.create(StacheElement.prototype);
 	StacheElementConstructorFunction.prototype.constructor = StacheElementConstructorFunction;
+
+	// Initialize the `observedAttributes`
+	initializeObservedAttributes(StacheElementConstructorFunction);
 
 	return StacheElementConstructorFunction;
 }

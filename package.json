@@ -27,7 +27,7 @@
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
-    "can-observable-bindings": "^1.0.0-pre.2",
+    "can-observable-bindings": "^1.0.2",
     "can-reflect": "^1.17.11",
     "can-test-helpers": "^1.1.4",
     "can-type": "^1.0.0-pre.2",
