@@ -85,8 +85,7 @@ module.exports.initializeObservedAttributes = function initializeObservedAttribu
 				Object.keys(definitions).forEach(propName => {
 					const definition = definitions[propName];
 					if (typeof definition.bind === 'function') {
-						const createBindFn = definition.bind(propName);
-						const bindFn = createBindFn(this);
+						const bindFn = definition.bind(propName, this);
 						// Set up the bindings so that they can be called during initialize
 						// to setup binding starts
 						this[metaSymbol]._uninitializedBindings[propName] = bindFn;

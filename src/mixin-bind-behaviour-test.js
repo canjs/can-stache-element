@@ -2,6 +2,7 @@ const QUnit = require("steal-qunit");
 const StacheElement = require("./can-stache-element");
 const type = require("can-type");
 const { fromAttribute } = require("can-observable-bindings");
+const canReflectDeps = require("can-reflect-dependencies");
 
 const testHelpers = require("../test/helpers");
 const browserSupports = testHelpers.browserSupports;
@@ -105,5 +106,56 @@ if (browserSupports.customElements) {
 		assert.strictEqual(el.getAttribute('name'), 'Kevin', 'We have the attribute');
 		assert.strictEqual(el.name, 'Kevin', 'We have initialized the property');
 		assert.strictEqual(setCounter, 1, 'We have only called the setter once');
+	});
+
+	QUnit.test("camelCase propName", function(assert) {
+		class BasicBindingsElement extends StacheElement {
+			static get view() {
+				return ``;
+			}
+
+			static get props() {
+				return {
+					firstName: {
+						type: type.convert(String),
+						bind: fromAttribute
+					}
+				};
+			}
+		}
+		customElements.define("camel-case", BasicBindingsElement);
+
+		const el = document.createElement('camel-case');
+		fixture.appendChild(el);
+		el.setAttribute('first-name', 'Kevin');
+
+		assert.equal(el.firstName, 'Kevin', 'We have the correct property value');
+	});
+
+	QUnit.test("check graph whatchangesme works", function(assert) {
+		class BasicBindingsElement extends StacheElement {
+			static get view() {
+				return ``;
+			}
+
+			static get props() {
+				return {
+					name: {
+						type: type.convert(String),
+						bind: fromAttribute
+					}
+				};
+			}
+		}
+		customElements.define("what-changes-me", BasicBindingsElement);
+
+		const el = document.createElement('what-changes-me');
+		fixture.appendChild(el);
+
+		const propDeps = canReflectDeps.getDependencyDataOf(el, "name").whatChangesMe.mutate.valueDependencies;
+		assert.equal(propDeps.size, 1, 'We have the graph data');
+		for (let dep of propDeps) {
+			assert.equal(dep[Symbol.for('can.getName')](), 'Observation<FromAttribute<what-changes-me.name>>', 'We have the correct graph dep');
+		}
 	});
 }
