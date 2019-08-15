@@ -33,7 +33,7 @@
     "can-test-helpers": "^1.1.4",
     "can-type": "^1.0.0-pre.2",
     "can-value": "^1.1.1",
-    "can-view-callbacks": "canjs/can-view-callbacks#major",
+    "can-view-callbacks": "^5.0.0-pre.1",
     "can-view-scope": "^4.13.1",
     "detect-cyclic-packages": "^1.1.0",
     "fixpack": "^2.3.1",
