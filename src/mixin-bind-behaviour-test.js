@@ -3,6 +3,7 @@ const StacheElement = require("./can-stache-element");
 const type = require("can-type");
 const { fromAttribute } = require("can-observable-bindings");
 const canReflectDeps = require("can-reflect-dependencies");
+const dev = require("can-test-helpers").dev;
 
 const testHelpers = require("../test/helpers");
 const browserSupports = testHelpers.browserSupports;
@@ -132,7 +133,7 @@ if (browserSupports.customElements) {
 		assert.equal(el.firstName, 'Kevin', 'We have the correct property value');
 	});
 
-	QUnit.test("check graph whatchangesme works", function(assert) {
+	dev.devOnlyTest("check graph whatchangesme works", function(assert) {
 		class BasicBindingsElement extends StacheElement {
 			static get view() {
 				return ``;
