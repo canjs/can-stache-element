@@ -1,6 +1,7 @@
 const QUnit = require("steal-qunit");
 const mixinDefine = require("./mixin-props");
 const type = require("can-type");
+const reflect = require("can-reflect");
 
 QUnit.module("can-stache-element - mixin-props");
 
@@ -19,4 +20,6 @@ QUnit.test("basics", function(assert) {
 
 	el.age = "33";
 	assert.equal(el.age, 33, "updated age");
+
+	assert.deepEqual(reflect.serialize(el), {age: 33}, 'serialization works');
 });

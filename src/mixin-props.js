@@ -2,12 +2,13 @@ const { mixinElement } = require("can-observable-mixin");
 const canReflect = require("can-reflect");
 const canLogDev = require("can-log/dev/dev");
 const eventTargetInstalledSymbol = Symbol.for("can.eventTargetInstalled");
+const serializeSymbol = Symbol.for("can.serialize");
 
 module.exports = function mixinDefine(Base = HTMLElement) {
 	const realAddEventListener = Base.prototype.addEventListener;
 	const realRemoveEventListener = Base.prototype.removeEventListener;
 
-	function installEventTarget(Type) {
+	function installEventTarget(Type, props) {
 		if(Type[eventTargetInstalledSymbol]) {
 			return;
 		}
@@ -26,12 +27,6 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 		// Warn on special properties
 		//!steal-remove-start
 		if(process.env.NODE_ENV !== 'production') {
-			// look for `static props`and fall back to `static define` if `props` doesn't exist
-			let props = typeof Type.props === "object" ?
-				Type.props :
-				typeof Type.define === "object" ?
-					Type.define :
-					{};
 			Object.keys(props).forEach(function(key) {
 				if("on" + key in Type.prototype) {
 					canLogDev.warn(`${canReflect.getName(Type)}: The defined property [${key}] matches the name of a DOM event. This property could update unexpectedly. Consider renaming.`);
@@ -41,10 +36,29 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 		//!steal-remove-end
 	}
 
+	function installSerialize(Type, props) {
+		Type.prototype[serializeSymbol] = function() {
+			return Object.keys(props).reduce((acc, prop) => {
+				acc[prop] = canReflect.serialize(this[prop]);
+				return acc;
+			}, {});
+		};
+	}
+
 	class DefinedClass extends mixinElement(Base) {
 		constructor() {
 			super();
-			installEventTarget(this.constructor);
+
+			// look for `static props`and fall back to `static define` if `props` doesn't exist
+			const Type = this.constructor;
+			const props = typeof Type.props === "object" ?
+				Type.props :
+				typeof Type.define === "object" ?
+					Type.define :
+					{};
+
+			installEventTarget(Type, props);
+			installSerialize(Type, props);
 		}
 
 		intialize(props) {
