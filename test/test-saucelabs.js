@@ -8,9 +8,6 @@ var platforms = [{
 	platform: "OS X 10.13",
 	version: "11"
 }, {
-	browserName: "MicrosoftEdge",
-	platform: "Windows 10"
-}, {
 	browserName: "firefox",
 	platform: "Windows 10",
 	version: "latest"
@@ -25,9 +22,17 @@ var platforms = [{
 	deviceName: "iPhone XS Simulator"
 }];
 
-var url = "http://localhost:3000/test/test.html?hidepassed";
-
 SauceLabs({
-	urls: [{ name: "can-stache-element", url : url }],
-	platforms: platforms
+	urls: [{
+		name: "can-stache-element",
+		platforms: platforms,
+		url : "http://localhost:3000/test/test.html?hidepassed"
+	}, {
+		name: "can-stache-element with CustomElements polyfill",
+		platforms: [{
+			browserName: "MicrosoftEdge",
+			platform: "Windows 10"
+		}],
+		url : "http://localhost:3000/test/test-edge.html?hidepassed"
+	}],
 });
