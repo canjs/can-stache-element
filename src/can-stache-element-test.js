@@ -297,7 +297,7 @@ if (browserSupports.customElements) {
 			static get props(){
 				return {
 					value: Number
-				}
+				};
 			}
 		}
 

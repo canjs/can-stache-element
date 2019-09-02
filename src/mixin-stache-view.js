@@ -55,7 +55,7 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 		[viewInsertSymbol]() {
 			return this;
 		}
-	};
+	}
 	StacheClass.prototype[Symbol.for("can.preventDataBindings")] = true;
 	return StacheClass;
 };
