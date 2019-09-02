@@ -1,6 +1,6 @@
 const QUnit = require("steal-qunit");
 const mixinLifecycleMethods = require("./mixin-lifecycle-methods");
-const browserSupports = require("../test/browser-supports");
+const browserSupports = require("../test/helpers").browserSupports;
 
 const inSetupSymbol = Symbol.for("can.initializing");
 
