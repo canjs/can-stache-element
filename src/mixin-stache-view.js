@@ -12,7 +12,7 @@ const viewInsertSymbol = Symbol.for("can.viewInsert");
 stache.addBindings(stacheBindings);
 
 module.exports = function mixinStacheView(Base = HTMLElement) {
-	return class StacheClass extends Base {
+	class StacheClass extends Base {
 		render(props, renderOptions) {
 			if(super.render) {
 				super.render(props);
@@ -56,4 +56,6 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 			return this;
 		}
 	};
+	StacheClass.prototype[Symbol.for("can.preventDataBindings")] = true;
+	return StacheClass;
 };
