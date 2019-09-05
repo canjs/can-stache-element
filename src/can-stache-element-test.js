@@ -291,4 +291,31 @@ if (browserSupports.customElements) {
 		assert.equal(undo(), 1, "Warned for the 'click' prop");
 	});
 
+	QUnit.test("bindings run once (#72)", function(assert) {
+
+		class CreateBindingsOnce extends StacheElement {
+			static get props(){
+				return {
+					value: Number
+				};
+			}
+		}
+
+		customElements.define('create-bindings-once', CreateBindingsOnce);
+
+		var calls = 0;
+
+		stache("<create-bindings-once value:from='this.read()'/>")({
+			read(){
+				calls++;
+				return 1;
+			}
+		});
+
+		assert.equal(calls,1, "only called once");
+
+
+
+	});
+
 }
