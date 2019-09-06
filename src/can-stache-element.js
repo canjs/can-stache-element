@@ -10,6 +10,7 @@ const mixinBindBehaviour = require("./mixin-bind-behaviour");
 const { initializeObservedAttributes } = require("./mixin-bind-behaviour");
 
 const canStacheBindings = require("can-stache-bindings");
+const { createConstructorFunction } = require("can-observable-mixin");
 
 const initializeSymbol = Symbol.for("can.initialize");
 const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
@@ -57,13 +58,9 @@ function DeriveElement(BaseElement = HTMLElement) {
 		}
 	}
 
-	function StacheElementConstructorFunction() {
-		const self = Reflect.construct(StacheElement, arguments, this.constructor);
-		return self;
-	}
-
-	StacheElementConstructorFunction.prototype = Object.create(StacheElement.prototype);
-	StacheElementConstructorFunction.prototype.constructor = StacheElementConstructorFunction;
+	const StacheElementConstructorFunction = createConstructorFunction(
+		StacheElement
+	);
 
 	// Initialize the `observedAttributes`
 	initializeObservedAttributes(StacheElementConstructorFunction);
