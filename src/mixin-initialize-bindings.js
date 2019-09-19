@@ -7,8 +7,9 @@ const metaSymbol = Symbol.for("can.meta");
 
 module.exports = function mixinBindings(Base = HTMLElement) {
 	return class InitializeBindingsClass extends Base {
-		initialize(props) {
-			var bindings = this[metaSymbol] && this[metaSymbol]._bindings;
+		connect(props) {
+			const meta = this[metaSymbol];
+			const bindings = meta && meta._bindings;
 
 			if (bindings) {
 				const bindingContext = {
@@ -16,26 +17,27 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 				};
 				// Initialize the viewModel.  Make sure you
 				// save it so the observables can access it.
-				var initializeData = stacheBindings.behaviors.initializeViewModel(bindings, props, (properties) => {
-					super.initialize(properties);
+				const initializeData = stacheBindings.behaviors.initializeViewModel(bindings, props, (properties) => {
+					super.connect(properties);
 					return this;
 				}, bindingContext);
 	
-				this[metaSymbol]._connectedBindingsTeardown = function() {
-					for (var attrName in initializeData.onTeardowns) {
+				meta._connectedBindingsTeardown = function() {
+					for (let attrName in initializeData.onTeardowns) {
 						initializeData.onTeardowns[attrName]();
 					}
 				};
 			} else {
-				if (super.initialize) {
-					super.initialize(props);
+				if (super.connect) {
+					super.connect(props);
 				}
 			}
 		}
 		disconnect() {
-			if(this[metaSymbol] && this[metaSymbol]._connectedBindingsTeardown) {
-				this[metaSymbol]._connectedBindingsTeardown();
-				this[metaSymbol]._connectedBindingsTeardown = null;
+			const meta = this[metaSymbol];
+			if(meta && meta._connectedBindingsTeardown) {
+				meta._connectedBindingsTeardown();
+				meta._connectedBindingsTeardown = null;
 				this[lifecycleStatusSymbol] = {
 					initialized: false,
 					rendered: false,

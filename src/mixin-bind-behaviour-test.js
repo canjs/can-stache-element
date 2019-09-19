@@ -100,9 +100,9 @@ if (browserSupports.customElements) {
 		customElements.define("setter-multiple-check", BasicBindingsElement);
 
 		const el = document.createElement('setter-multiple-check');
-		el.setAttribute('name', 'Kevin');
 
 		fixture.appendChild(el);
+		el.setAttribute('name', 'Kevin');
 		
 		assert.strictEqual(el.getAttribute('name'), 'Kevin', 'We have the attribute');
 		assert.strictEqual(el.name, 'Kevin', 'We have initialized the property');
