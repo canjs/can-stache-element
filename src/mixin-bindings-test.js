@@ -1,6 +1,7 @@
 const QUnit = require("steal-qunit");
 const StacheElement = require("./can-stache-element");
 const value = require("can-value");
+const SimpleObservable = require("can-simple-observable");
 
 const testHelpers = require("../test/helpers");
 const browserSupports = testHelpers.browserSupports;
@@ -249,5 +250,46 @@ if (browserSupports.customElements) {
 			.disconnect();
 
 		assert.ok(obj instanceof BindingsMethodsElement, "initialize, render, connect, disconnect");
+	});
+
+	QUnit.test("bindings work after being torn down and re-initialized", function(assert) {
+		class ReInitializeBindingsEl extends StacheElement {
+			static get view() {
+				return `
+				<p>Child {{ this.show }}</p>
+			  `;
+			}
+
+			static get props() {
+			   return {
+				   show: false
+			   };
+			}
+		}
+		customElements.define("reinitialize-bindings-el", ReInitializeBindingsEl);
+
+		const parent = new SimpleObservable(true);
+
+		const el = new ReInitializeBindingsEl().bindings({
+			show: parent
+		}).connect();
+
+		assert.equal(el.show, true, "el.show === true by default");
+
+		el.show = false;
+		assert.equal(el.show, false, "el.show toggled to false");
+		assert.equal(parent.value, false, "parent.value changed to false");
+
+		parent.value = true;
+		assert.equal(el.show, true, "el.show toggled to true");
+		assert.equal(parent.value, true, "parent.value changed to true");
+
+		// tear down and re-initialize bindings
+		el.disconnect()
+			.connect();
+
+		el.show = false;
+		assert.equal(el.show, false, "el.show toggled to false again");
+		assert.equal(parent.value, false, "parent.value changed to false again");
 	});
 }

@@ -14,7 +14,18 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 			if(this[metaSymbol] === undefined) {
 				this[metaSymbol] = {};
 			}
-			this[metaSymbol]._connectedBindings = bindings;
+			const bindingsObservables = {};
+			canReflect.eachKey(bindings, (parent, propName) => {
+				// Create an observable for reading/writing the viewModel
+				// even though it doesn't exist yet.
+				const child = keyObservable(this, propName);
+
+				bindingsObservables[propName] = {
+					parent,
+					child
+				};
+			});
+			this[metaSymbol]._connectedBindings = bindingsObservables;
 			return this;
 		}
 		initialize(props) {
@@ -26,23 +37,21 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 					this[metaSymbol]._bindings = [];
 				}
 
-				canReflect.eachKey(savedBindings, (parent, propName) => {
+				canReflect.eachKey(savedBindings, (binding, propName) => {
+					const { child, parent } = binding;
 
 					var canGetParentValue = parent != null && !!parent[getValueSymbol];
 					var canSetParentValue = parent != null && !!parent[setValueSymbol];
 
 					// If we can get or set the value, then we’ll create a binding
-					if (canGetParentValue === true || canSetParentValue) {
-
-						// Create an observable for reading/writing the viewModel
-						// even though it doesn't exist yet.
-						var child = keyObservable(this, propName);
+					if (canGetParentValue || canSetParentValue) {
 
 						// Create the binding similar to what’s in can-stache-bindings
 						var canBinding = new Bind({
 							child: child,
 							parent: parent,
-							queue: "domUI",
+							queue: "dom",
+							element: this,
 
 							//!steal-remove-start
 							// For debugging: the names that will be assigned to the updateChild
@@ -86,6 +95,12 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 
 			if(super.render) {
 				super.render(props, renderOptions, parentNodeList);
+			}
+		}
+		disconnect() {
+			delete this[metaSymbol]._bindings;
+			if (super.disconnect) {
+				super.disconnect();
 			}
 		}
 	};

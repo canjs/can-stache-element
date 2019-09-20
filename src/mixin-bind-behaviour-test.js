@@ -100,6 +100,10 @@ if (browserSupports.customElements) {
 		customElements.define("setter-multiple-check", BasicBindingsElement);
 
 		const el = document.createElement('setter-multiple-check');
+
+		// call setAttribute _before_ appendChild to simulate something like
+		// <setter-multiple-check name="Kevin" />
+		// being in the page before customElements.define is called
 		el.setAttribute('name', 'Kevin');
 
 		fixture.appendChild(el);
