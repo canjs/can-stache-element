@@ -4,6 +4,7 @@ const stacheBindings = require("can-stache-bindings");
 
 const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
 const metaSymbol = Symbol.for("can.meta");
+const inSetupSymbol = Symbol.for("can.initializing");
 
 module.exports = function mixinBindings(Base = HTMLElement) {
 	return class InitializeBindingsClass extends Base {
@@ -11,6 +12,11 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 			var bindings = this[metaSymbol] && this[metaSymbol]._bindings;
 
 			if (bindings) {
+				// set inSetup to false so that observations read in `initializeViewModel`
+				// correctly set up bindings
+				const origInSetup = this[inSetupSymbol];
+				this[inSetupSymbol] = false;
+
 				const bindingContext = {
 					element: this
 				};
@@ -26,6 +32,9 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 						initializeData.onTeardowns[attrName]();
 					}
 				};
+
+				// restore inSetup to the original value
+				this[inSetupSymbol] = origInSetup;
 			} else {
 				if (super.initialize) {
 					super.initialize(props);
