@@ -284,3 +284,25 @@ QUnit.test("lifecycle methods return the obj", function(assert) {
 
 	assert.ok(obj instanceof Obj, "initialize, render, connect, disconnect called twice");
 });
+
+QUnit.test("connect and disconnect always toggle each other", function(assert) {
+	assert.expect(4);
+
+	class Sup {
+		connect() {
+			assert.ok(true, "connect");
+		}
+
+		disconnect() {
+			assert.ok(true, "disconnect");
+		}
+	}
+
+	class Obj extends mixinLifecycleMethods(Sup) { }
+
+	const obj = new Obj();
+	obj.connect()
+		.disconnect()
+		.connect()
+		.disconnect();
+});
