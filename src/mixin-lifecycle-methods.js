@@ -119,6 +119,7 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 			}
 
 			lifecycleStatus.connected = true;
+			lifecycleStatus.disconnected = false;
 
 			return this;
 		}
@@ -146,7 +147,12 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 				this.disconnected();
 			}
 
-			lifecycleStatus.disconnected = true;
+			this[lifecycleStatusSymbol] = {
+				initialized: false,
+				rendered: false,
+				connected: false,
+				disconnected: true
+			};
 
 			return this;
 		}

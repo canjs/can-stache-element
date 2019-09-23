@@ -2,7 +2,6 @@
 
 const stacheBindings = require("can-stache-bindings");
 
-const lifecycleStatusSymbol = Symbol.for("can.lifecycleStatus");
 const metaSymbol = Symbol.for("can.meta");
 const inSetupSymbol = Symbol.for("can.initializing");
 
@@ -45,12 +44,6 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 			if(this[metaSymbol] && this[metaSymbol]._connectedBindingsTeardown) {
 				this[metaSymbol]._connectedBindingsTeardown();
 				this[metaSymbol]._connectedBindingsTeardown = null;
-				this[lifecycleStatusSymbol] = {
-					initialized: false,
-					rendered: false,
-					connected: false,
-					disconnected: true
-				};
 			}
 			if (super.disconnect) {
 				super.disconnect();
