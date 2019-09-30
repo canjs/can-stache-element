@@ -14,6 +14,33 @@ const { createConstructorFunction } = require("can-observable-mixin");
 
 const initializeSymbol = Symbol.for("can.initialize");
 const teardownHandlersSymbol = Symbol.for("can.teardownHandlers");
+const isViewSymbol = Symbol.for("can.isView");
+const Scope = require("can-view-scope");
+
+// Calling a renderer like {{foo()}} gets the template scope
+// added no matter what. This checks for that condition.
+// https://github.com/canjs/can-stache/issues/719
+function rendererWasCalledWithData(scope) {
+	return scope instanceof Scope &&
+		scope._parent &&
+		scope._parent._context instanceof Scope.TemplateContext;
+}
+
+function addContext(rawRenderer, tagData) {
+	function renderer(data) {
+		if(rendererWasCalledWithData(data)) {
+			return rawRenderer(tagData.scope.addLetContext(data._context));
+		} else {
+			// if it was called programmatically (not in stache), just add the data
+			return rawRenderer(tagData.scope.addLetContext(data));
+		}
+	}
+	// Marking as a view will add the template scope ... but it should
+	// already be present in `tagData.scope`.
+	// However, I mark this as a renderer because that is what it is.
+	renderer[isViewSymbol] = true;
+	return renderer;
+}
 
 function DeriveElement(BaseElement = HTMLElement) {
 	class StacheElement extends
@@ -47,10 +74,16 @@ function DeriveElement(BaseElement = HTMLElement) {
 				el,
 				tagData,
 				function makeViewModel(initialViewmodelData) {
+					for(let prop in tagData.templates) {
+						// It's ok to modify the argument. The argument is created
+						// just for what gets passed into creating the VM.
+						initialViewmodelData[prop] = addContext(tagData.templates[prop], tagData);
+					}
 					el.render(initialViewmodelData);
 					return el;
 				}
 			);
+
 
 			if (el[teardownHandlersSymbol]) {
 				el[teardownHandlersSymbol].push(teardownBindings);
