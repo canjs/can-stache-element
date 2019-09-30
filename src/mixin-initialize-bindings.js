@@ -10,7 +10,7 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 		initialize(props) {
 			var bindings = this[metaSymbol] && this[metaSymbol]._bindings;
 
-			if (bindings) {
+			if (bindings && bindings.length) {
 				// set inSetup to false so that observations read in `initializeViewModel`
 				// correctly set up bindings
 				const origInSetup = this[inSetupSymbol];

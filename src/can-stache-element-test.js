@@ -1,9 +1,11 @@
 const QUnit = require("steal-qunit");
 const Scope = require("can-view-scope");
 const viewCallbacks = require("can-view-callbacks");
+const stacheBindings = require("can-stache-bindings");
 const stache = require("can-stache");
 const SimpleObservable = require("can-simple-observable");
 const StacheElement = require("./can-stache-element");
+const type = require("can-type");
 const browserSupports = require("../test/helpers").browserSupports;
 const canReflect = require("can-reflect");
 const dev = require("can-test-helpers").dev;
@@ -313,9 +315,53 @@ if (browserSupports.customElements) {
 		});
 
 		assert.equal(calls,1, "only called once");
+	});
 
+	QUnit.test("initializeViewModel called once for elements rendered with stache", function(assert) {
+		const origInitializeViewModel = stacheBindings.behaviors.initializeViewModel;
+		let calls = 0;
+		stacheBindings.behaviors.initializeViewModel = function() {
+			calls++;
+			return origInitializeViewModel.apply(this, arguments);
+		};
 
+		class InitializeViewModelOnce extends StacheElement {
+			static get props(){
+				return {
+					num: type.convert(Number)
+				};
+			}
+		}
+		customElements.define('initialize-viewmodel-once', InitializeViewModelOnce);
 
+		const frag = stache("<initialize-viewmodel-once />")({});
+
+		document.querySelector("#qunit-fixture").appendChild(frag);
+
+		assert.equal(calls, 1, "only called once");
+	});
+
+	QUnit.test("initializeViewModel not called if there are no bindings", function(assert) {
+		const origInitializeViewModel = stacheBindings.behaviors.initializeViewModel;
+		let calls = 0;
+		stacheBindings.behaviors.initializeViewModel = function() {
+			calls++;
+			return origInitializeViewModel.apply(this, arguments);
+		};
+
+		class InitializeViewModelZeroTimes extends StacheElement {
+			static get props(){
+				return {
+					num: type.convert(Number)
+				};
+			}
+		}
+		customElements.define('initialize-viewmodel-zero-times', InitializeViewModelZeroTimes);
+
+		new InitializeViewModelZeroTimes()
+			.initialize();
+
+		assert.equal(calls, 0, "initializeViewModel not called");
 	});
 
 }
