@@ -31,8 +31,8 @@ function addContext(rawRenderer, tagData) {
 		if(rendererWasCalledWithData(data)) {
 			return rawRenderer(tagData.scope.addLetContext(data._context));
 		} else {
-			// if it was called normal, just add the data
-			return rawRenderer(tagData.scope.add(data));
+			// if it was called programmatically (not in stache), just add the data
+			return rawRenderer(tagData.scope.addLetContext(data));
 		}
 	}
 	// Marking as a view will add the template scope ... but it should

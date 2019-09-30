@@ -400,4 +400,44 @@ if (browserSupports.customElements) {
 
 	});
 
+	QUnit.test("can-template called outside stache works (#77)",function(assert){
+		class CanGetTemplatesInCode extends StacheElement {
+			static get view() {
+				return `{{ this.bar() }}`;
+			}
+			static get props() {
+				return {
+					inner: "INNER"
+				};
+			}
+
+			bar() {
+				return this.foo({ passed: "PASSED" });
+			}
+		}
+		customElements.define("can-get-templates-in-code", CanGetTemplatesInCode);
+
+		var template = stache("outer.stache",
+			`{{ let letScope="LETSCOPE" }}
+			<can-get-templates-in-code>
+			<can-template name="foo">
+				<div class="outer">{{ this.outer }}</div>
+				<div class="let-scope">{{ letScope }}</div>
+				<div class="passed">{{ passed }}</div>
+			</can-template>
+			</can-get-templates-in-code>`);
+
+		var frag = template({
+			outer: "OUTER"
+		});
+
+		assert.equal(frag.firstElementChild.querySelector(".outer").innerHTML, "OUTER", "Access OUTER scope");
+
+		assert.equal(frag.firstElementChild.querySelector(".let-scope").innerHTML, "LETSCOPE", "Access let scope scope");
+
+		assert.equal(frag.firstElementChild.querySelector(".passed").innerHTML, "PASSED", "Access passed scope");
+
+
+	});
+
 }
