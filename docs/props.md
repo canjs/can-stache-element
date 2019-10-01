@@ -29,7 +29,7 @@
   ```
   @codepen
 
-  > Note: to see all the options supported by `define`, see [can-observable-object].
+  > Note: to see all the options supported by `props`, see [can-observable-object].
 
 @signature `static get props() { return { ... }; }`
 
@@ -37,15 +37,17 @@
 
   ```js
   class TodoItem extends StacheElement {
-	  static props = {
-		name: String,
-		completed: false
-	};
+      static get props() {
+          return {
+              name: String,
+              completed: false
+          };
+      }
   }
   customElements.define("todo-item", TodoItem);
   ```
 
-  > Note: to see all the options supported by `define`, see [can-observable-object].
+  > Note: to see all the options supported by `props`, see [can-observable-object].
 
 @body
 
