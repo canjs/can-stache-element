@@ -89,12 +89,12 @@ module.exports = function mixinBindings(Base = HTMLElement) {
 				super.initialize(props);
 			}
 		}
-		render(props, renderOptions, parentNodeList) {
+		render(props, renderOptions) {
 			const viewRoot = this.viewRoot || this;
 			viewRoot.innerHTML = "";
 
 			if(super.render) {
-				super.render(props, renderOptions, parentNodeList);
+				super.render(props, renderOptions);
 			}
 		}
 		disconnect() {
