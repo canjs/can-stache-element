@@ -471,6 +471,49 @@ customElements.define("my-app", App);
 @codepen
 @highlight 7-9,13,only
 
+If a property changes, the rendered passed template also update 
+its HTML like following:
+
+```html
+<my-app></my-app>
+
+<script type="module">
+import { StacheElement, stache } from "can/everything";
+
+class HelloWorld extends StacheElement {
+  static view = `
+    <div>{{ this.messageTemplate( helloWorld=this ) }}</div>
+  `;
+  static props = {
+    messageTemplate: {
+      type: Function,
+      default: stache(`<h1>Default: {{helloWorld.message}}</h1>`)
+    },
+    message: "Hello World"
+  }
+  change() {
+    this.message = "Hello CanJS"
+  }
+}
+customElements.define("hello-world", HelloWorld);
+
+class App extends StacheElement {
+  static view = `
+    <hello-world>
+      <can-template name="messageTemplate">
+        <h1>{{ helloWorld.message }}</h1>
+        <button on:click="helloWorld.change()">Toggle</button>
+      </can-template>
+    </hello-world>
+  `;
+}
+customElements.define("my-app", App);
+</script>
+```
+@codepen
+@highlight 17-19,28,only
+
+
 ## Testing
 
 Custom elements have [lifecycle methods](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements#Using_the_lifecycle_callbacks) that are automatically called by the browser.
