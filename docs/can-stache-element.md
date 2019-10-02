@@ -1,6 +1,6 @@
 @module {function} can-stache-element
 @parent can-views
-@collection can-ecosystem
+@collection can-core
 @group can-stache-element/static 0 static
 @group can-stache-element/lifecycle-methods 1 lifecycle methods
 @group can-stache-element/lifecycle-hooks 2 lifecycle hooks

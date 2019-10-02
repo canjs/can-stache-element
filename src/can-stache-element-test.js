@@ -1,10 +1,12 @@
 const QUnit = require("steal-qunit");
 const Scope = require("can-view-scope");
 const viewCallbacks = require("can-view-callbacks");
+const stacheBindings = require("can-stache-bindings");
 const stache = require("can-stache");
 const SimpleObservable = require("can-simple-observable");
 const StacheElement = require("./can-stache-element");
-const browserSupports = require("../test/browser-supports");
+const type = require("can-type");
+const browserSupports = require("../test/helpers").browserSupports;
 const canReflect = require("can-reflect");
 const dev = require("can-test-helpers").dev;
 
@@ -16,7 +18,7 @@ if (browserSupports.customElements) {
 
 		class Input extends StacheElement {
 			static get view() {
-				return `<p><input value:bind="this.inputValue" on:change="this.handleChange(scope.element.value)"></p>`;
+				return `<p><input value:from="this.inputValue" on:change="this.handleChange(scope.element.value)"></p>`;
 			}
 
 			handleChange(val) {
@@ -289,6 +291,153 @@ if (browserSupports.customElements) {
 		let undo = dev.willWarn(/click/);
 		new ClickPropEl();
 		assert.equal(undo(), 1, "Warned for the 'click' prop");
+	});
+
+	QUnit.test("bindings run once (#72)", function(assert) {
+
+		class CreateBindingsOnce extends StacheElement {
+			static get props(){
+				return {
+					value: Number
+				};
+			}
+		}
+
+		customElements.define('create-bindings-once', CreateBindingsOnce);
+
+		var calls = 0;
+
+		stache("<create-bindings-once value:from='this.read()'/>")({
+			read(){
+				calls++;
+				return 1;
+			}
+		});
+
+		assert.equal(calls,1, "only called once");
+	});
+
+	QUnit.test("initializeViewModel called once for elements rendered with stache", function(assert) {
+		const origInitializeViewModel = stacheBindings.behaviors.initializeViewModel;
+		let calls = 0;
+		stacheBindings.behaviors.initializeViewModel = function() {
+			calls++;
+			return origInitializeViewModel.apply(this, arguments);
+		};
+
+		class InitializeViewModelOnce extends StacheElement {
+			static get props(){
+				return {
+					num: type.convert(Number)
+				};
+			}
+		}
+		customElements.define('initialize-viewmodel-once', InitializeViewModelOnce);
+
+		const frag = stache("<initialize-viewmodel-once />")({});
+
+		document.querySelector("#qunit-fixture").appendChild(frag);
+
+		assert.equal(calls, 1, "only called once");
+	});
+
+	QUnit.test("initializeViewModel not called if there are no bindings", function(assert) {
+		const origInitializeViewModel = stacheBindings.behaviors.initializeViewModel;
+		let calls = 0;
+		stacheBindings.behaviors.initializeViewModel = function() {
+			calls++;
+			return origInitializeViewModel.apply(this, arguments);
+		};
+
+		class InitializeViewModelZeroTimes extends StacheElement {
+			static get props(){
+				return {
+					num: type.convert(Number)
+				};
+			}
+		}
+		customElements.define('initialize-viewmodel-zero-times', InitializeViewModelZeroTimes);
+
+		new InitializeViewModelZeroTimes()
+			.initialize();
+
+		assert.equal(calls, 0, "initializeViewModel not called");
+	});
+
+	QUnit.test("can-template support (#77)",function(assert){
+
+		class CanGetTemplates extends StacheElement {
+			static get view(){
+				return stache("can-get-templates.stache",
+					"{{this.foo( passed='PASSED' )}}");
+			}
+			static get props(){
+				return {inner: "INNER"};
+			}
+		}
+
+		customElements.define('can-get-templates', CanGetTemplates);
+
+		var template = stache("outer.stache",
+			"{{let letScope='LETSCOPE'}}"+
+			"<can-get-templates>"+
+			"<can-template name='foo'>"+
+				"<div class='outer'>{{this.outer}}</div>"+
+				"<div class='let-scope'>{{letScope}}</div>"+
+				"<div class='passed'>{{passed}}</div>"+
+			"</can-template>"+
+			"</can-get-templates>");
+
+		var frag = template({
+			outer: "OUTER"
+		});
+
+		assert.equal(frag.firstElementChild.querySelector(".outer").innerHTML, "OUTER", "Access OUTER scope");
+
+		assert.equal(frag.firstElementChild.querySelector(".let-scope").innerHTML, "LETSCOPE", "Access let scope scope");
+
+		assert.equal(frag.firstElementChild.querySelector(".passed").innerHTML, "PASSED", "Access passed scope");
+
+	});
+
+	QUnit.test("can-template called outside stache works (#77)",function(assert){
+		class CanGetTemplatesInCode extends StacheElement {
+			static get view() {
+				return `{{ this.bar() }}`;
+			}
+			static get props() {
+				return {
+					inner: "INNER"
+				};
+			}
+
+			bar() {
+				return this.foo({ passed: "PASSED" });
+			}
+		}
+		customElements.define("can-get-templates-in-code", CanGetTemplatesInCode);
+
+		var template = stache("outer.stache",
+			`{{ let letScope="LETSCOPE" }}
+			<can-get-templates-in-code>
+			<can-template name="foo">
+				<div class="outer">{{ this.outer }}</div>
+				<div class="let-scope">{{ letScope }}</div>
+				<div class="passed">{{ passed }}</div>
+			</can-template>
+			</can-get-templates-in-code>`);
+
+		var frag = template({
+			outer: "OUTER"
+		});
+
+		assert.equal(frag.firstElementChild.querySelector(".outer").innerHTML, "OUTER", "Access OUTER scope");
+
+		assert.equal(frag.firstElementChild.querySelector(".let-scope").innerHTML, "LETSCOPE", "Access let scope scope");
+
+		assert.equal(frag.firstElementChild.querySelector(".passed").innerHTML, "PASSED", "Access passed scope");
+
+
 	});
 
 }

@@ -1,6 +1,7 @@
 import QUnit from "steal-qunit";
 import StacheElement from "./can-stache-element";
-import browserSupports from "../test/browser-supports";
+import testHelpers from "../test/helpers";
+const { browserSupports } = testHelpers;
 
 QUnit.module("can-stache-element - import/export syntax in steal");
 
