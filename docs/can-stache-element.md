@@ -28,16 +28,16 @@
   <script type="module">
   import { StacheElement } from "can/everything";
   class Counter extends StacheElement {
-	  static view = `
-		  Count: <span>{{this.count}}</span>
-		  <button on:click="this.increment()">+1</button>
-	  `;
-	  static props = {
-		  count: 0
-	  };
-	  increment() {
-		  this.count++;
-	  }
+    static view = `
+      Count: <span>{{ this.count }}</span>
+      <button on:click="this.increment()">+1</button>
+    `;
+    static props = {
+      count: 0
+    };
+    increment() {
+      this.count++;
+    }
   }
   customElements.define("count-er", Counter);
   </script>
@@ -97,10 +97,10 @@ To create a [can-stache] view for the element, add a [can-stache-element/static.
 <script type="module">
 import { StacheElement } from "can/everything";
 class Counter extends StacheElement {
-	static view = `
-		Count: <span>{{this.count}}</span>
-		<button on:click="this.increment()">+1</button>
-	`;
+  static view = `
+    Count: <span>{{ this.count }}</span>
+    <button on:click="this.increment()">+1</button>
+  `;
 }
 customElements.define("count-er", Counter);
 </script>
@@ -121,13 +121,13 @@ To add property definitions, add a [can-stache-element/static.props static props
 <script type="module">
 import { StacheElement } from "can/everything";
 class Counter extends StacheElement {
-	static view = `
-		Count: <span>{{this.count}}</span>
-		<button on:click="this.increment()">+1</button>
-	`;
-	static props = {
-		count: 6
-	};
+  static view = `
+    Count: <span>{{ this.count }}</span>
+    <button on:click="this.increment()">+1</button>
+  `;
+  static props = {
+    count: 6
+  };
 }
 customElements.define("count-er", Counter);
 </script>
@@ -144,16 +144,16 @@ Methods (as well as getters and setters) can be added to the class body as well:
 <script type="module">
 import { StacheElement } from "can/everything";
 class Counter extends StacheElement {
-	static view = `
-		Count: <span>{{this.count}}</span>
-		<button on:click="this.increment()">+1</button>
-	`;
-	static props = {
-		count: 6
-	};
-	increment() {
-		this.count++;
-	}
+  static view = `
+    Count: <span>{{ this.count }}</span>
+    <button on:click="this.increment()">+1</button>
+  `;
+  static props = {
+    count: 6
+  };
+  increment() {
+    this.count++;
+  }
 }
 customElements.define("count-er", Counter);
 </script>
@@ -172,39 +172,341 @@ If needed, [can-stache-element/lifecycle-hooks.connected] and [can-stache-elemen
 import { StacheElement } from "can/everything";
 
 class Timer extends StacheElement {
-	static view = `
-		<p>{{this.time}}</p>
-	`;
-	static props = {
-		time: { type: Number, default: 0 },
-		timerId: Number
-	};
-	connected() {
-		this.timerId = setInterval(() => {
-			this.time++;
-		}, 1000);
-		console.log("connected");
-	}
-	disconnected() {
-		clearInterval(this.timerId);
-		console.log("disconnected");
-	}
+  static view = `
+    <p>{{ this.time }}</p>
+  `;
+  static props = {
+    time: { type: Number, default: 0 },
+    timerId: Number
+  };
+  connected() {
+    this.timerId = setInterval(() => {
+      this.time++;
+    }, 1000);
+    console.log("connected");
+  }
+  disconnected() {
+    clearInterval(this.timerId);
+    console.log("disconnected");
+  }
 }
 customElements.define("time-er", Timer);
 
 let timer;
 document.body.querySelector("button#add").addEventListener("click", () => {
-	timer = document.createElement("time-er");
-	document.body.appendChild(timer);
+  timer = document.createElement("time-er");
+  document.body.appendChild(timer);
 });
 
 document.body.querySelector("button#remove").addEventListener("click", () => {
-	document.body.removeChild(timer);
+  document.body.removeChild(timer);
 });
 </script>
 ```
 @codepen
 @highlight 14-23,only
+
+### Passing templates (customizing layout)
+
+It's a very common need to customize the html of a custom element. For example,
+you might want a `<hello-world>` element to write out the "Hello World" message inside an
+`<h1>`, `<h2>` or any other DOM structure.
+
+On a high level, this customization involves two steps:
+
+- Passing templates with `<can-template>`
+- Calling the templates with `{{ this.template() }}`
+
+#### Passing templates with `<can-template>`
+
+When rendering a StacheElement in a [can-stache] template, you can declaratively create and
+pass templates with the `<can-template>` element.
+
+For example, one might want to customize one `<hello-world>` element to write out
+"Hello World" message in a `<h1>` or in an italic paragraph as follows:
+
+```html
+<hello-world>
+  <can-template name="messageTemplate">
+    <h1>{{ message }}</h1>
+  </can-template>
+</hello-world>
+
+<hello-world>
+  <can-template name="messageTemplate">
+    <p>I say "<i>{{ message }}</i>"!</p>
+  </can-template>
+</hello-world>
+```
+
+Here's what you need to know about `<can-template>`:
+
+- Every `<can-template>` __MUST__ have a name attribute. This is
+  the name of the property on the custom
+  element that will be set to the template. In the previous example, both `<hello-world>`'s will be created
+  with a `messageTemplate` property:
+
+  ```js
+  document.querySelector("hello-world").messageTemplate //-> templateFunction()
+  ```
+
+- You can have multiple `<can-template>`s within a custom element.  For example,
+  the following passes two templates to configure `<hello-world>`:
+
+  ```html
+  <hello-world>
+    <can-template name="greetingTemplate">
+      <b>{{ greeting }}</b>
+    </can-template>
+    <can-template name="subjectTemplate">
+      <b>{{ subject }}</b>
+    </can-template>
+  </hello-world>
+  ```
+
+- `<can-template>`s have the same scope of the custom element, __plus__
+  a `LetScope` that the custom element can optionally provide. This means
+  that a `{{ this.someData }}` immediately outside the `<hello-world>` will
+  reference the same value as `{{ this.someData }}` within a `<can-template>`:
+
+  ```html
+  {{ this.someData }}
+  <hello-world>
+    <can-template name="messageTemplate">
+      <h1>{{ message }}</h1>
+      <p>Also: {{ this.someData }}</p>
+    </can-template>
+  </hello-world>
+  ```
+  @highlight 1,5
+
+  The custom element can add additional data, like `message`, to these
+  templates. We will see how to do that in the next section.
+
+#### Calling the templates with `{{ this.template() }}`
+
+Once templates are passed to a custom element, you can call those templates
+within the `StacheElement`'s [can-stache-element/static.view]. For example,
+`<hello-world>` might call a passed `messageTemplate` as follows:
+
+```html
+<my-app></my-app>
+
+<script type="module">
+import { StacheElement } from "can/everything";
+
+class HelloWorld extends StacheElement {
+  static view = `
+    <div>{{ this.messageTemplate() }}</div>
+  `;
+  static props = {
+    messageTemplate: {type: Function, required: true},
+    message: "Hello World"
+  }
+}
+customElements.define("hello-world", HelloWorld);
+
+class App extends StacheElement {
+  static view = `
+    <hello-world>
+      <can-template name="messageTemplate">
+        <h1>{{ message }}</h1>
+      </can-template>
+    </hello-world>
+  `;
+}
+customElements.define("my-app", App);
+</script>
+```
+@codepen
+@highlight 19,23,only
+
+While the above will render the passed `messageTemplate`, it will not provide it
+a `{{ message }}` variable that can be read. You can pass values into a template
+with a [can-stache/expressions/hash]. The following passes the message:
+
+```html
+<my-app></my-app>
+
+<script type="module">
+import { StacheElement } from "can/everything";
+
+class HelloWorld extends StacheElement {
+  static view = `
+    <div>{{ this.messageTemplate(message = this.message) }}</div>
+  `;
+  static props = {
+    messageTemplate: {type: Function, required: true},
+    message: "Hello World"
+  }
+}
+customElements.define("hello-world", HelloWorld);
+
+class App extends StacheElement {
+  static view = `
+    <hello-world>
+      <can-template name="messageTemplate">
+        <h1>{{ message }}</h1>
+      </can-template>
+    </hello-world>
+  `;
+}
+customElements.define("my-app", App);
+</script>
+```
+@codepen
+@highlight 8,only
+
+Sometimes, instead of passing each variable, you might want to pass the
+entire custom element:
+
+```html
+<my-app></my-app>
+
+<script type="module">
+import { StacheElement } from "can/everything";
+
+class HelloWorld extends StacheElement {
+  static view = `
+    <div>{{ this.messageTemplate(helloWorld = this) }}</div>
+  `;
+  static props = {
+    messageTemplate: {type: Function, required: true},
+    message: "Hello World"
+  }
+}
+customElements.define("hello-world", HelloWorld);
+
+class App extends StacheElement {
+  static view = `
+    <hello-world>
+      <can-template name="messageTemplate">
+        <h1>{{ helloWorld.message }}</h1>
+      </can-template>
+    </hello-world>
+  `;
+}
+customElements.define("my-app", App);
+</script>
+```
+@codepen
+@highlight 8,21,only
+
+Finally, you might want to provide a default template if one is not
+provided. You can do this either in the view or as a default props
+value.
+
+In the view:
+
+```html
+<my-app></my-app>
+
+<script type="module">
+import { StacheElement } from "can/everything";
+
+class HelloWorld extends StacheElement {
+  static view = `
+    {{# if( this.messageTemplate ) }}
+      <div>{{ this.messageTemplate(helloWorld = this) }}</div>
+    {{ else }}
+      <h1>Default: {{this.message}}</h1>
+    {{/ if }}
+  `;
+  static props = {
+    messageTemplate: Function,
+    message: "Hello World"
+  }
+}
+customElements.define("hello-world", HelloWorld);
+
+class App extends StacheElement {
+  static view = `
+    <hello-world>
+    </hello-world>
+  `;
+}
+customElements.define("my-app", App);
+</script>
+```
+@codepen
+@highlight 7-13,15,only
+
+As a default props value:
+
+```html
+<my-app></my-app>
+
+<script type="module">
+import { StacheElement, stache } from "can/everything";
+
+class HelloWorld extends StacheElement {
+  static view = `
+    <div>{{ this.messageTemplate(helloWorld = this) }}</div>
+  `;
+  static props = {
+    messageTemplate: {
+      type: Function,
+      default: stache(`<h1>Default: {{ helloWorld.message }}</h1>`)
+    },
+    message: "Hello World"
+  }
+}
+customElements.define("hello-world", HelloWorld);
+
+class App extends StacheElement {
+  static view = `
+    <hello-world>
+    </hello-world>
+  `;
+}
+customElements.define("my-app", App);
+</script>
+```
+@codepen
+@highlight 7-9,13,only
+
+If a property changes, the rendered passed template also update 
+its HTML like following:
+
+```html
+<my-app></my-app>
+
+<script type="module">
+import { StacheElement, stache } from "can/everything";
+
+class HelloWorld extends StacheElement {
+  static view = `
+    <div>{{ this.messageTemplate(helloWorld = this) }}</div>
+  `;
+  static props = {
+    messageTemplate: {
+      type: Function,
+      default: stache(`<h1>Default: {{ helloWorld.message }}</h1>`)
+    },
+    message: "Hello World"
+  }
+  change() {
+    this.message = "Hello CanJS"
+  }
+}
+customElements.define("hello-world", HelloWorld);
+
+class App extends StacheElement {
+  static view = `
+    <hello-world>
+      <can-template name="messageTemplate">
+        <h1>{{ helloWorld.message }}</h1>
+        <button on:click="helloWorld.change()">Toggle</button>
+      </can-template>
+    </hello-world>
+  `;
+}
+customElements.define("my-app", App);
+</script>
+```
+@codepen
+@highlight 17-19,28,only
+
 
 ## Testing
 
@@ -235,20 +537,20 @@ To test an element's properties and methods, call the [can-stache-element/lifecy
 ```js
 import { StacheElement } from "can/everything";
 class Counter extends StacheElement {
-	static view = `
-		Count: <span>{{this.count}}</span>
-		<button on:click="this.increment()">+1</button>
-	`;
-	static props = {
-		count: 6
-	};
-	increment() {
-		this.count++;
-	}
+  static view = `
+    Count: <span>{{ this.count }}</span>
+    <button on:click="this.increment()">+1</button>
+  `;
+  static props = {
+    count: 6
+  };
+  increment() {
+    this.count++;
+  }
 }
 customElements.define("count-er", Counter);
 const counter = new Counter()
-	.initialize({ count: 20 });
+  .initialize({ count: 20 });
 
 counter.count === 20; // -> true
 
@@ -265,20 +567,20 @@ To test an element's view, call the [can-stache-element/lifecycle-methods.render
 ```js
 import { StacheElement } from "can/everything";
 class Counter extends StacheElement {
-	static view = `
-		Count: <span>{{this.count}}</span>
-		<button on:click="this.increment()">+1</button>
-	`;
-	static props = {
-		count: 6
-	};
-	increment() {
-		this.count++;
-	}
+  static view = `
+    Count: <span>{{ this.count }}</span>
+    <button on:click="this.increment()">+1</button>
+  `;
+  static props = {
+    count: 6
+  };
+  increment() {
+    this.count++;
+  }
 }
 customElements.define("count-er", Counter);
 const counter = new Counter()
-	.render({ count: 20 });
+  .render({ count: 20 });
 
 counter.firstElementChild.innerHTML === "20"; // -> true
 
@@ -296,26 +598,26 @@ To test the functionality of the `connected` or `disconnected` hooks, you can ca
 import { StacheElement } from "can/everything";
 
 class Timer extends StacheElement {
-	static view = `
-		<p>{{this.time}}</p>
-	`;
-	static props = {
-		time: { type: Number, default: 0 },
-		timerId: Number
-	};
-	connected() {
-		this.timerId = setInterval(() => {
-			this.time++;
-		}, 1000);
-	}
-	disconnected() {
-		clearInterval(this.timerId);
-	}
+  static view = `
+    <p>{{ this.time }}</p>
+  `;
+  static props = {
+    time: { type: Number, default: 0 },
+    timerId: Number
+  };
+  connected() {
+    this.timerId = setInterval(() => {
+      this.time++;
+    }, 1000);
+  }
+  disconnected() {
+    clearInterval(this.timerId);
+  }
 }
 customElements.define("time-er", Timer);
 
 const timer = new Timer()
-	.connect();
+  .connect();
 
 timer.firstElementChild; // -> <p>0</p>
 
