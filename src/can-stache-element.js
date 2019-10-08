@@ -1,5 +1,6 @@
 "use strict";
 
+const namespace = require("can-namespace");
 const mixinLifecycleMethods = require("./mixin-lifecycle-methods");
 const mixinProps = require("./mixin-props");
 const mixinStacheView = require("./mixin-stache-view");
@@ -101,4 +102,4 @@ function DeriveElement(BaseElement = HTMLElement) {
 	return StacheElementConstructorFunction;
 }
 
-module.exports = DeriveElement();
+module.exports = namespace.StacheElement = DeriveElement();
