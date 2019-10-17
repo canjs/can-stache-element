@@ -4,6 +4,7 @@ const stache = require("can-stache");
 const stacheBindings = require("can-stache-bindings");
 const domMutate = require("can-dom-mutate");
 const domMutateNode = require("can-dom-mutate/node");
+const Scope = require("can-view-scope");
 
 const rendererSymbol = Symbol.for("can.stacheRenderer");
 const viewInsertSymbol = Symbol.for("can.viewInsert");
@@ -31,7 +32,10 @@ module.exports = function mixinStacheView(Base = HTMLElement) {
 				this.constructor[rendererSymbol] = renderer;
 			}
 
-			const frag = renderer(this, renderOptions);
+			const frag = renderer(
+				new Scope(this, null, { viewModel: true }),
+				renderOptions
+			);
 
 			const viewRoot = this.viewRoot || this;
 			domMutateNode.appendChild.call(viewRoot, frag);
