@@ -109,4 +109,35 @@ if (browserSupports.customElements) {
 		app.render({});
 		assert.ok(true, "doesn't throw");
 	});
+
+	QUnit.test("supports `scope.vm` lookups in the view", function(assert) {
+		class StacheElement extends mixinStacheView(HTMLElement) {}
+	
+		class App extends StacheElement {
+			static get view() {
+				return "{{ scope.vm.greeting }} World";
+			}
+	
+			constructor() {
+				super();
+				this.greeting = "Hello";
+			}
+		}
+		customElements.define("stache-scope-vm", App);
+	
+		const app = new App();
+	
+		assert.equal(
+			typeof app.render,
+			"function",
+			"mixin adds a render method on class instances"
+		);
+		app.render();
+	
+		assert.equal(
+			app.innerHTML,
+			"Hello World",
+			"render method renders the static `view` property as stache"
+		);
+	});
 }
