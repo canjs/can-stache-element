@@ -1,0 +1,38 @@
+<!doctype html>
+<title>CanJS tests</title>
+<script src="../node_modules/steal/steal.js" main="can-stache-element"></script>
+
+<script>
+	var sizes = {};
+
+	function getSize(moduleName) {
+	    if(sizes[moduleName]) {
+	        return sizes[moduleName];
+	    }
+	    var load = System._traceData.loads[moduleName];
+	    var size = load.source.length;
+	    var deps = load.metadata.dependencies;
+	    deps.forEach(function(dep){
+	        //size += getSize(dep);
+					getSize(dep);
+	    });
+	    sizes[moduleName] = size;
+	    return size;
+	}
+
+
+	steal.done().then(function(){
+	    System.import("can-stache-element").then(function(can){
+
+	        getSize("can-stache-element@1.0.2#src/can-stache-element");
+
+	        var res = Object.keys(sizes).map(function(moduleName){
+	            return [moduleName, sizes[moduleName]];
+	        }).sort(function(a, b){
+	            return b[1] - a[1];
+	        });
+
+	        console.log(res);
+	    });
+	});
+</script>
