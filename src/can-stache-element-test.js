@@ -292,6 +292,24 @@ if (browserSupports.customElements) {
 		new ClickPropEl();
 		assert.equal(undo(), 1, "Warned for the 'click' prop");
 	});
+	
+	dev.devOnlyTest("Warns when a property matches a built in property", function(assert) {
+		class ClickPropEl extends StacheElement {
+			static get props() {
+				return {
+					tagName: String,
+					get other() {
+						throw new Error('Don\'t get me');
+					}
+				};
+			}
+		}
+		customElements.define("tag-name-prop-should-warn", ClickPropEl);
+
+		let undo = dev.willWarn(/tagName/);
+		new ClickPropEl();
+		assert.equal(undo(), 1, "Warned for the 'tagName' prop");
+	});
 
 	QUnit.test("bindings run once (#72)", function(assert) {
 
