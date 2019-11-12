@@ -39,7 +39,7 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 				if("on" + key in Type.prototype) {
 					canLogDev.warn(`${canReflect.getName(Type)}: The defined property [${key}] matches the name of a DOM event. This property could update unexpectedly. Consider renaming.`);
 				}
-				else if(Base === HTMLElement && key in Base.prototype) {
+				else if(key in Base.prototype) {
 					canLogDev.warn(`${canReflect.getName(Type)}: The defined property [${key}] matches the name of a property on the built in type being extended, ${canReflect.getName(Base)}. This could lead to errors by changing the expected behaviour of that property. Consider renaming.`);
 				}
 			});
