@@ -10,7 +10,7 @@
    The following example uses `disconnected` to make an HTTP POST request when the element is removed from the page:
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class MyElement extends StacheElement {
 	  disconnected() {

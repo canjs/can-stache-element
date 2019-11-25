@@ -10,7 +10,7 @@
   ```html
   <time-er></time-er>
   <script type="module">
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class Timer extends StacheElement {
 	  static view = `

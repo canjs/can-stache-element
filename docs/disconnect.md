@@ -8,7 +8,7 @@
   Calling `disconnect` will clean up an element's event handlers and call its [can-stache-element/lifecycle-hooks.disconnected disconnected hook]. Normally this is called by the [can-stache-element/lifecycle-methods.disconnectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   const logs = [];
 

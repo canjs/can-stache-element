@@ -26,7 +26,7 @@
   ```html
   <count-er></count-er>
   <script type="module">
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
   class Counter extends StacheElement {
     static view = `
       Count: <span>{{ this.count }}</span>
@@ -75,7 +75,7 @@ In order to create a basic custom element with `StacheElement`, create a class t
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
 }
 customElements.define("count-er", Counter);
@@ -95,7 +95,7 @@ To create a [can-stache] view for the element, add a [can-stache-element/static.
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
   static view = `
     Count: <span>{{ this.count }}</span>
@@ -119,7 +119,7 @@ To add property definitions, add a [can-stache-element/static.props static props
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
   static view = `
     Count: <span>{{ this.count }}</span>
@@ -142,7 +142,7 @@ Methods (as well as getters and setters) can be added to the class body as well:
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
   static view = `
     Count: <span>{{ this.count }}</span>
@@ -169,7 +169,7 @@ If needed, [can-stache-element/lifecycle-hooks.connected] and [can-stache-elemen
 <button id="add">Add Timer</button>
 <button id="remove">Remove Timer</button>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class Timer extends StacheElement {
   static view = `
@@ -293,7 +293,7 @@ within the `StacheElement`'s [can-stache-element/static.view]. For example,
 <my-app></my-app>
 
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class HelloWorld extends StacheElement {
   static view = `
@@ -329,7 +329,7 @@ with a [can-stache/expressions/hash]. The following passes the message:
 <my-app></my-app>
 
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class HelloWorld extends StacheElement {
   static view = `
@@ -364,7 +364,7 @@ entire custom element:
 <my-app></my-app>
 
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class HelloWorld extends StacheElement {
   static view = `
@@ -402,7 +402,7 @@ In the view:
 <my-app></my-app>
 
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class HelloWorld extends StacheElement {
   static view = `
@@ -437,7 +437,7 @@ As a default props value:
 <my-app></my-app>
 
 <script type="module">
-import { StacheElement, stache } from "can/everything";
+import { StacheElement, stache } from "can";
 
 class HelloWorld extends StacheElement {
   static view = `
@@ -472,7 +472,7 @@ its HTML like following:
 <my-app></my-app>
 
 <script type="module">
-import { StacheElement, stache } from "can/everything";
+import { StacheElement, stache } from "can";
 
 class HelloWorld extends StacheElement {
   static view = `
@@ -535,7 +535,7 @@ To test an element's properties and methods, call the [can-stache-element/lifecy
 
 
 ```js
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
   static view = `
     Count: <span>{{ this.count }}</span>
@@ -565,7 +565,7 @@ counter.count === 21; // -> true
 To test an element's view, call the [can-stache-element/lifecycle-methods.render] method with any initial property values:
 
 ```js
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
   static view = `
     Count: <span>{{ this.count }}</span>
@@ -595,7 +595,7 @@ counter.firstElementChild.innerHTML === "21"; // -> true
 To test the functionality of the `connected` or `disconnected` hooks, you can call the [can-stache-element/lifecycle-methods.connect] or [can-stache-element/lifecycle-methods.disconnect] method.
 
 ```js
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class Timer extends StacheElement {
   static view = `

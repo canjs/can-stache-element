@@ -8,7 +8,7 @@
   Calling `initialize` will set up property definitions and set initial property values. Normally this is called by the [can-stache-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class MyElement extends StacheElement {
 	  static view = `
