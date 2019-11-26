@@ -10,7 +10,7 @@
   The `connectedCallback` can also be called manually to trigger these things. For example, the following defines a `greeting` property, uses it in the `view`, and also programmatically adds a `<p>` element in the `connected` hook:
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class MyElement extends StacheElement {
 	static view = `

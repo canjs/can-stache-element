@@ -10,7 +10,7 @@
   ```html
   <count-er></count-er>
   <script type="module">
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
   class Counter extends StacheElement {
   	static view = `
   		<p>Count: <span>1</span></p>
@@ -28,7 +28,7 @@
   For browsers that do not support class fields (and applications not using a transpiler), properties can be defined using a `static` getter like shown below.
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
   class Counter extends StacheElement {
   	static get view() {
   		return `
@@ -43,7 +43,7 @@
   A function can be passed as the view property. This is useful for loading views in their own files and loading them with [steal-stache] or similar.
 
   ```js
-  import { StacheElement, stache } from "can/everything";
+  import { StacheElement, stache } from "can";
 
   const renderer = stache(`<p>Count: <span>1</span></p>`);
 
@@ -79,7 +79,7 @@ There are three things to understand about an element's view:
 The view is rendered with `this` as the element instance. The following prints the `age` property of the element.
 
 ```js
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class Person extends StacheElement {
 	static view = `
@@ -148,7 +148,7 @@ StacheElement handles rendering the view at the right time. In normal applicatio
 ```html
 <count-er></count-er>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
 	static view = `
 		<p>Count: <span>1</span></p>
@@ -169,7 +169,7 @@ customElements.define("count-er", Counter);
 For testing purposes, the [can-stache-element/lifecycle-methods.render] method can be called to manually render the view. This means that the view can be tested without putting the element in the page, which greatly improves the performance of tests.
 
 ```js
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 class Counter extends StacheElement {
 	static view = `
 		<p>Count: <span>1</span></p>
@@ -197,7 +197,7 @@ The [guides/setup] guide has details on how to import stache views directly. For
 the following example uses `import view from "./app.stache";`:
 
 ```js
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 import view from "./app.stache";
 
 class MyApp extends StacheElement {

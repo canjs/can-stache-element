@@ -10,7 +10,7 @@
   The `disconnectedCallback` can also be called manually to trigger these things:
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class MyElement extends StacheElement {
 	  connected() {

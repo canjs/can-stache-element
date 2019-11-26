@@ -10,7 +10,7 @@
   To add property definitions, add a `static` class field like shown below.
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class TodoItem extends StacheElement {
 	  static props = {
@@ -70,7 +70,7 @@ These are discussed below and the full set of options can be found in the [can-o
 The following example...
 
 ```js
-import { StacheElement, type } from "can/everything";
+import { StacheElement, type } from "can";
 
 class Person extends StacheElement {
 	static view = `
@@ -109,7 +109,7 @@ The following example shows a few examples of declarative properties:
 ```html
 <per-son></per-son>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class Person extends StacheElement {
 	static view = `
@@ -149,7 +149,7 @@ In the following example, an error is thrown because the `<to-do>` element is in
 ```html
 <to-do></to-do>
 <script type="module">
-import { StacheElement } from "can/everything";
+import { StacheElement } from "can";
 
 class Todo extends StacheElement {
 	static props = {

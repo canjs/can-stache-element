@@ -8,7 +8,7 @@
   Calling `connect` will [can-stache-element/lifecycle-methods.initialize] and [can-stache-element/lifecycle-methods.render] an element and call its [can-stache-element/lifecycle-hooks.connected] hook. Normally this is called by the [can-stache-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class MyElement extends StacheElement {
 	  static view = `

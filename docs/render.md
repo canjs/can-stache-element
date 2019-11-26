@@ -8,7 +8,7 @@
   Calling `render` will [can-stache-element/lifecycle-methods.initialize] an element and render its [can-stache-element/static.view] into its `innerHTML`. Normally this is called by the [can-stache-element/lifecycle-methods.connectedCallback], but can be called manually for testing:
 
   ```js
-  import { StacheElement } from "can/everything";
+  import { StacheElement } from "can";
 
   class MyElement extends StacheElement {
 	  static view = `
