@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.4.5",
+    "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.4.5",
     "@webcomponents/custom-elements": "^1.2.4",
     "can-observable-bindings": "^1.1.0",
