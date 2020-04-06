@@ -60,7 +60,7 @@
   "scripts": {
     "ci": "npm run test && node test/test-saucelabs.js",
     "compile-to-es5": "babel src --out-dir dist",
-    "detect-cycle": "detect-cyclic-packages",
+    "detect-cycle": "detect-cyclic-packages --ignore fsevents",
     "http-server": "http-server -p 3000 --silent",
     "jshint": "jshint src/*.js test/*.js --config",
     "lint": "fixpack && npm run jshint",
