@@ -20,3 +20,41 @@ QUnit.test("basics", function(assert) {
 	el.age = "33";
 	assert.equal(el.age, 33, "updated age");
 });
+
+QUnit.test('Class fields should be observable', (assert) => {
+	class DefineElement extends mixinDefine(Object) {
+		greetings = 'Hello'; // jshint ignore:line
+		static get props() {
+			return {};
+		}
+	}
+	const el = new DefineElement();
+	el.initialize();
+
+	el.on('greetings', () => {
+		assert.ok('The class field is observable');
+	});
+
+	el.greetings = 'Hola';
+	
+});
+
+QUnit.test('Class fields should not overwrite static props', (assert) => {
+	class DefineElement extends mixinDefine(Object) {
+		greetings = 'Hello'; // jshint ignore:line
+		static get props() {
+			return {
+				greetings: {type: String, default: 'Bonjour'}
+			};
+		}
+	}
+	const el = new DefineElement();
+	el.initialize();
+
+	el.on('greetings', () => {
+		assert.ok('The class field is observable');
+	});
+
+	el.greetings = 'Hola';
+	
+});
