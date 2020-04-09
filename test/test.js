@@ -5,21 +5,22 @@ try {
 		field = "value"
 	}`);
 	supportsClassFields = true;
-	console.log('works');
 } catch(e) {
 	supportsClassFields = false;
 }
 
-require("../src/can-stache-element-test");
-require("../src/mixin-props-test");
-require("../src/mixin-lifecycle-methods-test");
-require("../src/mixin-stache-view-test");
-require("../src/mixin-viewmodel-symbol-test");
-require("../src/import-export-steal-test");
-require("../src/mixin-bindings-test");
-require("../src/mixin-initialize-bindings-test");
-require("../src/mixin-bind-behaviour-test");
+import "../src/can-stache-element-test";
+import "../src/mixin-props-test";
+import "../src/mixin-lifecycle-methods-test";
+import "../src/mixin-stache-view-test";
+import "../src/mixin-viewmodel-symbol-test";
+import "../src/import-export-steal-test";
+import "../src/mixin-bindings-test";
+import "../src/mixin-initialize-bindings-test";
+import "../src/mixin-bind-behaviour-test";
 
 if (supportsClassFields) {
-	require('../src/mixin-props-class-fields-test');
+	//It doesn't work with require
+	//Even when change the above imports to require
+	steal.import('~/src/mixin-props-class-fields-test');
 }
