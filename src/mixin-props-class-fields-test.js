@@ -60,28 +60,3 @@ QUnit.test('Class fields should not overwrite static props', function (assert) {
 		assert.ok(error, 'Error thrown on the wrong type');
 	}
 });
-
-QUnit.test('handle descriptor getter', function(assert) {
-	const foo = new mixinDefine(Object);
-
-	let _bar = "Hello";
-	Object.defineProperty(foo, "bar", {
-		get() {
-			return _bar;
-		},
-		set(val) {
-			_bar = val;
-		}
-	});
-	
-	assert.equal(foo.bar, 'Hello');
-
-	foo.on('greetings', function (ev, newVal, oldVal) {
-		assert.equal(oldVal, 'Hello', 'Old value is correct');
-		assert.equal(newVal, 'Hola', 'Value is updated');
-		assert.ok(ev, 'The class field is observable');
-		done();
-	});
-
-	foo.bar = 'Hola';
-});
