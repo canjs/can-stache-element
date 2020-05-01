@@ -206,6 +206,31 @@ document.body.querySelector("button#remove").addEventListener("click", () => {
 @codepen
 @highlight 14-23,only
 
+
+#### Observable class fields
+
+`StachElement` class fields are observables like [can-stache-element/static.props static props],
+ the counter example can be like the following:
+
+ ```html
+ <count-er></count-er>
+<script type="module">
+import { StacheElement } from "can";
+class Counter extends StacheElement {
+  static view = `
+    Count: <span>{{ this.count }}</span>
+    <button on:click="this.increment()">+1</button>
+  `;
+  
+  count: 6
+}
+customElements.define("count-er", Counter);
+</script>
+```
+@codepen
+@highlight 11,only
+
+
 ### Passing templates (customizing layout)
 
 It's a very common need to customize the html of a custom element. For example,
