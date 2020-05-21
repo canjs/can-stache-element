@@ -137,7 +137,7 @@ customElements.define("count-er", Counter);
 
 #### Observable class fields
 
-`StachElement` class [fields are observables](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Class_fields) like [can-stache-element/static.props static props],
+`StachElement` [class fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Class_fields) like [can-stache-element/static.props static props],
  the counter example can be written like the following:
 
  ```html
