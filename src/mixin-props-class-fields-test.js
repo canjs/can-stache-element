@@ -1,6 +1,8 @@
 const QUnit = require("steal-qunit");
 const mixinDefine = require("./mixin-props");
 
+QUnit.module("can-stache-element - class fields");
+
 QUnit.test('Class fields should be observable', function (assert) {
 	const done = assert.async();
 	assert.expect(4);
