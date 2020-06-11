@@ -1,14 +1,3 @@
-let supportsClassFields;
-
-try {
-	eval(`class Foo {
-		field = "value"
-	}`);
-	supportsClassFields = true;
-} catch(e) {
-	supportsClassFields = false;
-}
-
 import "../src/can-stache-element-test";
 import "../src/mixin-props-test";
 import "../src/mixin-lifecycle-methods-test";

@@ -137,7 +137,7 @@ customElements.define("count-er", Counter);
 
 #### Observable class fields
 
-`StachElement` class fields are also observable.,
+`StachElement` [class fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields) are also observable.,
  the counter example can be written like the following:
 
  ```html
