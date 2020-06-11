@@ -135,6 +135,33 @@ customElements.define("count-er", Counter);
 @codepen
 @highlight 9-11,only
 
+#### Observable class fields
+
+`StachElement` [class fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields) are also observable.,
+ the counter example can be written like the following:
+
+ ```html
+ <count-er></count-er>
+
+<script type="module">
+import { StacheElement } from "can";
+class Counter extends StacheElement {
+  static view = `
+    Count: <span>{{ this.count }}</span>
+    <button on:click="this.increment()">+1</button>
+  `;
+  
+  count = 6
+}
+customElements.define("count-er", Counter);
+</script>
+```
+@codepen
+@highlight 11,only
+
+> **Note:** In order to make `count` property observable, either `count-er` element must be added to the page
+> or `initialize` method on the `Counter` instance gets invoked.
+
 ### Defining Methods, Getters, and Setters
 
 Methods (as well as getters and setters) can be added to the class body as well:

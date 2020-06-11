@@ -1,4 +1,4 @@
-const { mixinElement } = require("can-observable-mixin");
+const { mixinElement, mixins } = require("can-observable-mixin");
 const canReflect = require("can-reflect");
 const canLogDev = require("can-log/dev/dev");
 const eventTargetInstalledSymbol = Symbol.for("can.eventTargetInstalled");
@@ -56,8 +56,26 @@ module.exports = function mixinDefine(Base = HTMLElement) {
 			installEventTarget(this.constructor);
 		}
 
-		intialize(props) {
-			super.intialize(props);
+		initialize(props) {
+			super.initialize(props);
+			let prop, staticProps;
+
+			if (this.constructor.props) {
+				staticProps = Object.keys(this.constructor.props);
+			}
+
+			for (prop in this) {
+				if (this.hasOwnProperty(prop)) {
+					if (staticProps && staticProps.includes(prop)) {
+						const val = this[prop];
+						delete this[prop];
+						this[prop] = val;
+					} else {
+						mixins.expando(this, prop, this[prop]);
+					}
+				}
+			}
+
 		}
 	}
 
