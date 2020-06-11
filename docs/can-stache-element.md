@@ -137,7 +137,7 @@ customElements.define("count-er", Counter);
 
 #### Observable class fields
 
-`StachElement` [class fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Class_fields) like [can-stache-element/static.props static props],
+`StachElement` class fields are also observable.,
  the counter example can be written like the following:
 
  ```html
@@ -159,8 +159,8 @@ customElements.define("count-er", Counter);
 @codepen
 @highlight 11,only
 
-In order to make `count` property observable, either `count-er` element must be added to the page
- or `initialize` method on the `Counter` instance gets invoked.
+> **Note:** In order to make `count` property observable, either `count-er` element must be added to the page
+> or `initialize` method on the `Counter` instance gets invoked.
 
 ### Defining Methods, Getters, and Setters
 
