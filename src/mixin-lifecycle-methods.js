@@ -21,6 +21,14 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 				throw new Error("can-stache-element: Do not pass arguments to the constructor. Initial property values should be passed to the `initialize` hook.");
 			}
 
+			Object.defineProperty(this, "INERT_PRERENDERED", {
+				writable: false,
+				value: globalThis.canStacheElementInertPrerendered || false
+			});
+			if (this.INERT_PRERENDERED) {
+				return;
+			}
+
 			// add inSetup symbol to prevent events being dispatched
 			defineConfigurableNonEnumerable(this, inSetupSymbol, true);
 
@@ -38,6 +46,9 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 
 		// custom element lifecycle methods
 		connectedCallback(props) {
+			if (this.INERT_PRERENDERED) {
+				return;
+			}
 			this.initialize(props);
 			this.render();
 			this.connect();
@@ -51,6 +62,10 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 
 		// custom lifecycle methods
 		initialize(props) {
+			if (this.INERT_PRERENDERED) {
+				return;
+			}
+
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.initialized) {
@@ -73,6 +88,9 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		render(props) {
+			if (this.INERT_PRERENDERED) {
+				return;
+			}
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.rendered) {
@@ -93,6 +111,9 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		connect(props) {
+			if (this.INERT_PRERENDERED) {
+				return;
+			}
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.connected) {
@@ -125,6 +146,9 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 		}
 
 		disconnect() {
+			if (this.INERT_PRERENDERED) {
+				return;
+			}
 			const lifecycleStatus = this[lifecycleStatusSymbol];
 
 			if (lifecycleStatus.disconnected) {
