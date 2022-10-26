@@ -24,6 +24,7 @@ function isInertPrerendered(element) {
 
 	// Flag exists when newly created can-stache-elements might be expected to be static
 	// When false, all newly created can-stache-elements are assumed to not be static
+	// Return false at this point for performance
 	if (!globalThis.canMooStache) {
 		return false;
 	}
