@@ -13,6 +13,35 @@ function defineConfigurableNonEnumerable(obj, prop, value) {
 	});
 }
 
+/**
+ * Used to determine if can-stache-element is static or not
+ */
+function isInertPrerendered(element) {
+	// Flag exists when all can-stache-elements are expected to be static
+	if (globalThis.canStacheElementInertPrerendered) {
+		return true;
+	}
+
+	// Flag exists when newly created can-stache-elements might be expected to be static
+	// When false, all newly created can-stache-elements are assumed to not be static
+	if (!globalThis.canMooStache) {
+		return false;
+	}
+
+	// Find static render container if it exists
+	const ssgContainer = document.querySelector('canjs-app[data-canjs-static-render]')
+	
+	// No static render container found, assume it is not static
+	if (!ssgContainer) {
+		return false;
+	}
+	
+	// Since globalThis.canMooStache is true, any newly created can-stache-elements may
+	// be expected to be static, check by checking if its contained by an element with
+	// `data-canjs-static-render` attribute
+	return ssgContainer.contains(element);
+}
+
 module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 	return class LifecycleElement extends BaseElement {
 		constructor() {
@@ -23,7 +52,7 @@ module.exports = function mixinLifecycleMethods(BaseElement = HTMLElement) {
 
 			Object.defineProperty(this, "INERT_PRERENDERED", {
 				writable: false,
-				value: globalThis.canStacheElementInertPrerendered || false
+				value: isInertPrerendered(this)
 			});
 			if (this.INERT_PRERENDERED) {
 				return;
