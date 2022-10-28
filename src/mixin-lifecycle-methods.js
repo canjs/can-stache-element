@@ -30,7 +30,7 @@ function isInertPrerendered(element) {
 	}
 
 	// Find static render container if it exists
-	const ssgContainer = document.querySelector('canjs-app[data-canjs-static-render]')
+	const ssgContainer = document.querySelector('[data-canjs-static-render]')
 	
 	// No static render container found, assume it is not static
 	if (!ssgContainer) {
